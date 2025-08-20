@@ -19,25 +19,41 @@ public class Edith {
 
         System.out.println(greeting);
 
-        ArrayList<String> inputs = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (true) {
             String inp = scanner.nextLine();
+            String[] inps = inp.split(" ");
 
             if (inp.equals("bye")) {
                 System.out.println(out_message);
                 break;
+
             } else if (inp.equals("list")) {
                 System.out.println("==================================");
-                for (int i = 0; i < inputs.size(); i++){
+                for (int i = 0; i < tasks.size(); i++){
                     System.out.print(i+1);
-                    System.out.println(". " + inputs.get(i));
+                    System.out.println(". " + tasks.get(i).toString());
                 }
                 System.out.println("==================================");
-                
+
+            } else if (inps[0].equals("mark")) {
+                int index = Integer.parseInt(inps[1]) - 1;
+                tasks.get(index).markAsDone();
+                String msg = "good job buddy you finished task:\n"
+                        + tasks.get(index).toString();
+                System.out.println(pad(msg));
+
+            } else if (inps[0].equals("unmark")) {
+                int index = Integer.parseInt(inps[1]) - 1;
+                tasks.get(index).markAsUndone();
+                String msg = "alright then we reopening task:\n"
+                        + tasks.get(index).toString();
+                System.out.println(pad(msg));
+
             } else {
-                inputs.add(inp);
-                System.out.println(pad("added: " + inp));
+                tasks.add(new Task(inp));
+                System.out.println(pad("added new task: " + inp));
             }
 
         }
