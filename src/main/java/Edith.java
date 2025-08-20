@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Edith {
     public static String pad(String s) {
@@ -19,15 +19,27 @@ public class Edith {
 
         System.out.println(greeting);
 
+        ArrayList<String> inputs = new ArrayList<>();
+
         while (true) {
             String inp = scanner.nextLine();
 
             if (inp.equals("bye")) {
                 System.out.println(out_message);
                 break;
+            } else if (inp.equals("list")) {
+                System.out.println("==================================");
+                for (int i = 0; i < inputs.size(); i++){
+                    System.out.print(i+1);
+                    System.out.println(". " + inputs.get(i));
+                }
+                System.out.println("==================================");
+                
             } else {
-                System.out.println(pad(inp));
+                inputs.add(inp);
+                System.out.println(pad("added: " + inp));
             }
+
         }
 
 
