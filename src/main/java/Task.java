@@ -18,7 +18,7 @@ public class Task {
     @Override
     public String toString() {
         String icon = isDone ? "X" : " ";
-        return "[" + icon + "] " + description;
+        return "[T][" + icon + "] " + description;
     }
 
 }

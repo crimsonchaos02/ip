@@ -51,9 +51,42 @@ public class Edith {
                         + tasks.get(index).toString();
                 System.out.println(pad(msg));
 
+            } else if (inps[0].equals("todo")) {
+                tasks.add(new Task(inp));    //todo is equivalent to of a regular task
+                System.out.println(pad("added new todo task: " + inp
+                        + "\nyou have " + tasks.size() + " tasks left"));
+
+            } else if (inps[0].equals("deadline")) {
+                String[] tmp = inp.split(" /by ");
+                if (tmp.length == 1){
+                    System.out.println(pad("woi use '/' before putting the deadline"));
+                    continue;
+                }
+                String description = String.join(" ",
+                        Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
+                //basically just removing the command word from the description phrase
+                tasks.add(new Deadline(description, tmp[1]));
+                System.out.println(pad("added new deadline:\n" + tasks.get(tasks.size()-1).toString()
+                        + "\nyou have " + tasks.size() + " tasks left"));
+
+            } else if (inps[0].equals("event")) {
+                String[] tmp = inp.split(" /from | /to ");
+                if (tmp.length == 1){
+                    System.out.println(pad("woi use '/from' and '/to' to specify timeframe"));
+                    continue;
+                }
+                String description = String.join(" ",
+                        Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
+
+                tasks.add(new Event(description, tmp[1], tmp[2]));
+                System.out.println(pad("added new event:\n" + tasks.get(tasks.size()-1).toString()
+                                            + "\nyou have " + tasks.size() + " tasks left"));
+
+
             } else {
-                tasks.add(new Task(inp));
-                System.out.println(pad("added new task: " + inp));
+                tasks.add(new Task(inp));                             //assume that a regular task is added
+                System.out.println(pad("added new task: " + inp
+                        + "\nyou have " + tasks.size() + " tasks left"));
             }
 
         }
