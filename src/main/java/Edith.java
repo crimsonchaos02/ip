@@ -13,7 +13,7 @@ public class Edith {
                 + "\nhello! this is edith :D"
                 + "\nwhat do we need today?"
                 + "\n==================================";
-        String out_message = "=================================="
+        String exit_message = "=================================="
                 + "\njiayousss bye have a great time"
                 + "\n==================================";
 
@@ -27,7 +27,7 @@ public class Edith {
                 String[] inps = inp.split(" ");
 
                 if (inp.equals("bye")) {
-                    System.out.println(out_message);
+                    System.out.println(exit_message);
                     break;
 
                 } else if (inp.equals("list")) {
@@ -48,6 +48,7 @@ public class Edith {
                                     + "\nuse event to add an event (/from and /by to specify details)"
                                     + "\nuse bye to exit the chatbot";
                     System.out.println(pad(out_msg));
+
                 } else if (inps[0].equals("mark")) {
                     if (!inps[1].matches("-?\\d+")) {
                         throw new EdithException("please enter index of the task to mark done (use list to find index)");
@@ -63,7 +64,7 @@ public class Edith {
 
                 } else if (inps[0].equals("unmark")) {
                     if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to mark done (use list to find index)");
+                        throw new EdithException("please enter index of the task to mark undone (use list to find index)");
                     }
                     int index = Integer.parseInt(inps[1]) - 1;
                     if (index < 0 || index >= tasks.size()) {
@@ -78,7 +79,10 @@ public class Edith {
                     if (inps.length == 1) {
                         throw new EdithException("include a task description");
                     }
-                    tasks.add(new Task(inp));
+                    String description = String.join(" ",
+                            Arrays.copyOfRange(inps, 1, inps.length));
+                    //basically just removing the command word from the description phrase
+                    tasks.add(new Task(description));
                     System.out.println(pad("added new todo task:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
 
@@ -113,9 +117,26 @@ public class Edith {
                     System.out.println(pad("added new event:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
 
+                } else if (inps[0].equals("delete") || inps[0].equals("del")) {
+                    if (!inps[1].matches("-?\\d+")) {
+                        throw new EdithException("please enter index of the task to delete (use list to find index)");
+                    }
+                    int index = Integer.parseInt(inps[1]) - 1;
+                    if (index < 0 || index >= tasks.size()) {
+                        throw new EdithException("enter a valid index -- that's not in the to do list range");
+                    }
+                    String task_descr = tasks.get(index).toString();
+                    tasks.remove(index);
+
+                    String out_msg = "okay we removed\n"
+                                    + task_descr
+                                    + "\nyou have " + tasks.size() + " tasks left";
+                    System.out.println(out_msg);
+
                 } else {
-                    throw new EdithException("get your formatting right thanks (type cmds for valid commands)");
+                    throw new EdithException("get your formatting right thanks (type cmd/cmds for valid commands)");
                 }
+
             } catch (EdithException e) {
                 System.out.println(pad("woi please " + e.getMessage()));
             } catch (Exception e) {
