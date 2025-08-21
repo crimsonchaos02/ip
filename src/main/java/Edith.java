@@ -26,11 +26,13 @@ public class Edith {
                 String inp = scanner.nextLine();
                 String[] inps = inp.split(" ");
 
-                if (inp.equals("bye")) {
+                Command cmd = Command.fromString(inps[0]);
+
+                if (cmd == Command.BYE) {
                     System.out.println(exit_message);
                     break;
 
-                } else if (inp.equals("list")) {
+                } else if (cmd == Command.LIST) {
                     System.out.println("==================================");
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.print(i + 1);
@@ -38,7 +40,7 @@ public class Edith {
                     }
                     System.out.println("==================================");
 
-                } else if (inp.equals("cmds") || inp.equals("cmd")) {
+                } else if (cmd == Command.CMDS) {
                     String out_msg = "commands list:"
                                     + "\nuse list to show your current tasks"
                                     + "\nuse mark i to mark task i as done"
@@ -49,7 +51,7 @@ public class Edith {
                                     + "\nuse bye to exit the chatbot";
                     System.out.println(pad(out_msg));
 
-                } else if (inps[0].equals("mark")) {
+                } else if (cmd == Command.MARK) {
                     if (!inps[1].matches("-?\\d+")) {
                         throw new EdithException("please enter index of the task to mark done (use list to find index)");
                     }
@@ -62,7 +64,7 @@ public class Edith {
                             + tasks.get(index).toString();
                     System.out.println(pad(msg));
 
-                } else if (inps[0].equals("unmark")) {
+                } else if (cmd == Command.UNMARK) {
                     if (!inps[1].matches("-?\\d+")) {
                         throw new EdithException("please enter index of the task to mark undone (use list to find index)");
                     }
@@ -75,7 +77,7 @@ public class Edith {
                             + tasks.get(index).toString();
                     System.out.println(pad(msg));
 
-                } else if (inps[0].equals("todo")) {
+                } else if (cmd == Command.TODO) {
                     if (inps.length == 1) {
                         throw new EdithException("include a task description");
                     }
@@ -86,7 +88,7 @@ public class Edith {
                     System.out.println(pad("added new todo task:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
 
-                } else if (inps[0].equals("deadline")) {
+                } else if (cmd == Command.DEADLINE) {
                     String[] tmp = inp.split(" /by ");
                     if (tmp.length == 1) {
                         throw new EdithException("use '/by' indicating the deadline");
@@ -101,7 +103,7 @@ public class Edith {
                     System.out.println(pad("added new deadline:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
 
-                } else if (inps[0].equals("event")) {
+                } else if (cmd == Command.EVENT) {
                     String[] tmp = inp.split(" /from | /to ");
                     if (tmp.length == 1) {
                         throw new EdithException("use '/from' and '/to' indicating event period");
@@ -117,7 +119,7 @@ public class Edith {
                     System.out.println(pad("added new event:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
 
-                } else if (inps[0].equals("delete") || inps[0].equals("del")) {
+                } else if (cmd == Command.DELETE) {
                     if (!inps[1].matches("-?\\d+")) {
                         throw new EdithException("please enter index of the task to delete (use list to find index)");
                     }
