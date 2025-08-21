@@ -53,7 +53,7 @@ public class Edith {
 
             } else if (inps[0].equals("todo")) {
                 tasks.add(new Task(inp));    //todo is equivalent to of a regular task
-                System.out.println(pad("added new todo task: " + inp
+                System.out.println(pad("added new todo task:\n" + tasks.get(tasks.size()-1).toString()
                         + "\nyou have " + tasks.size() + " tasks left"));
 
             } else if (inps[0].equals("deadline")) {

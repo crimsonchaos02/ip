@@ -1,7 +1,59 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
+==================================
+hello! this is edith :D
+what do we need today?
+==================================
+==================================
+added new todo task:
+[T][ ] todo plan trip
+you have 1 tasks left
+==================================
+==================================
+woi use '/from' and '/to' to specify timeframe
+==================================
+==================================
+added new event:
+[E][ ] lecture (from: tomorrow 12 to: 4pm)
+you have 2 tasks left
+==================================
+==================================
+added new deadline:
+[D][ ] 2108 lectures, due by: sunday
+you have 3 tasks left
+==================================
+==================================
+added new task: read article
+you have 4 tasks left
+==================================
+==================================
+1. [T][ ] todo plan trip
+2. [E][ ] lecture (from: tomorrow 12 to: 4pm)
+3. [D][ ] 2108 lectures, due by: sunday
+4. [T][ ] read article
+==================================
+==================================
+good job buddy you finished task:
+[E][X] lecture (from: tomorrow 12 to: 4pm)
+==================================
+==================================
+good job buddy you finished task:
+[T][X] read article
+==================================
+==================================
+1. [T][ ] todo plan trip
+2. [E][X] lecture (from: tomorrow 12 to: 4pm)
+3. [D][ ] 2108 lectures, due by: sunday
+4. [T][X] read article
+==================================
+==================================
+alright then we reopening task:
+[E][ ] lecture (from: tomorrow 12 to: 4pm)
+==================================
+==================================
+1. [T][ ] todo plan trip
+2. [E][ ] lecture (from: tomorrow 12 to: 4pm)
+3. [D][ ] 2108 lectures, due by: sunday
+4. [T][X] read article
+==================================
+==================================
+jiayousss bye have a great time
+==================================
