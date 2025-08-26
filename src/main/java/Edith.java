@@ -1,10 +1,57 @@
 import java.util.*;
+import java.io.*;
 
 public class Edith {
     public static String pad(String s) {
         return "==================================\n"
                 + s
                 + "\n==================================";
+    }
+
+    public static void saveToFile(ArrayList<Task> tasks, String filename) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < tasks.size(); i++) {
+            out.append(i + 1);
+            out.append(". ");
+            out.append(tasks.get(i).toString());
+            out.append("\n");
+        }
+
+        try {
+            FileWriter writer = new FileWriter(filename);
+            writer.write(out.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Task parseTask(String s) {
+        Task out;
+        char type = s.charAt(4);
+        char isDone = s.charAt(7);
+
+        if (type == 'T') {
+            String[] tmp = s.split(" ");
+            String desc = s.substring(10);
+            out =  new Task(desc);
+        } else if (type == 'D') {
+            String[] tmp = s.split(", due by: ");
+            String due = tmp[1];
+            String desc = tmp[0].substring(10);
+            out = new Deadline(desc, due);
+
+        } else {
+            String[] tmp = s.split("from: | to: " );
+            String from = tmp[1];
+            String to = tmp[2].substring(0, tmp[2].length()-1);
+            String desc = s.substring(10, s.indexOf('(')-1);
+            out = new Event(desc, from, to);
+        }
+        if (isDone == 'X') {
+            out.markAsDone();
+        }
+        return out;
     }
 
     public static void main(String[] args) {
@@ -17,9 +64,27 @@ public class Edith {
                 + "\njiayousss bye have a great time"
                 + "\n==================================";
 
-        System.out.println(greeting);
+
 
         ArrayList<Task> tasks = new ArrayList<>();
+
+        try {
+            File file = new File("output.txt");
+            Scanner s = new Scanner(file);
+            while (s.hasNextLine()) {
+                String next = s.nextLine();
+                if (next.equals("\n")) {
+                    break;
+                }
+                Task t = parseTask(next);
+                tasks.add(t);
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Note -- no saved task list found.");
+        }
+
+        System.out.println(greeting);
 
         while (true) {
             try {
@@ -63,6 +128,7 @@ public class Edith {
                     String msg = "good job buddy you finished task:\n"
                             + tasks.get(index).toString();
                     System.out.println(pad(msg));
+                    saveToFile(tasks, "output.txt");
 
                 } else if (cmd == Command.UNMARK) {
                     if (!inps[1].matches("-?\\d+")) {
@@ -76,6 +142,7 @@ public class Edith {
                     String msg = "alright then we reopening task:\n"
                             + tasks.get(index).toString();
                     System.out.println(pad(msg));
+                    saveToFile(tasks, "output.txt");
 
                 } else if (cmd == Command.TODO) {
                     if (inps.length == 1) {
@@ -87,6 +154,7 @@ public class Edith {
                     tasks.add(new Task(description));
                     System.out.println(pad("added new todo task:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
+                    saveToFile(tasks, "output.txt");
 
                 } else if (cmd == Command.DEADLINE) {
                     String[] tmp = inp.split(" /by ");
@@ -102,6 +170,7 @@ public class Edith {
                     tasks.add(new Deadline(description, tmp[1]));
                     System.out.println(pad("added new deadline:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
+                    saveToFile(tasks, "output.txt");
 
                 } else if (cmd == Command.EVENT) {
                     String[] tmp = inp.split(" /from | /to ");
@@ -118,6 +187,7 @@ public class Edith {
                     tasks.add(new Event(description, tmp[1], tmp[2]));
                     System.out.println(pad("added new event:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
+                    saveToFile(tasks, "output.txt");
 
                 } else if (cmd == Command.DELETE) {
                     if (!inps[1].matches("-?\\d+")) {
@@ -134,6 +204,7 @@ public class Edith {
                                     + task_descr
                                     + "\nyou have " + tasks.size() + " tasks left";
                     System.out.println(out_msg);
+                    saveToFile(tasks, "output.txt");
 
                 } else {
                     throw new EdithException("get your formatting right thanks (type cmd/cmds for valid commands)");
