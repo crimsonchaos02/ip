@@ -1,12 +1,40 @@
-import java.util.*;
-import java.io.*;
+package edith;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import java.util.Scanner;
+
+/**
+ * Main code of the Edith chatbot.
+ *
+ */
 
 public class Edith {
+
+    /**
+     * Returns the same string, padded above and below for formatting. Helper function.
+     *
+     * @param s Message that is to be padded.
+     * @return Padded message.
+     */
     public static String pad(String s) {
         return "==================================\n"
                 + s
                 + "\n==================================";
     }
+
+    /**
+     * Saves the task list to an external txt file.
+     *
+     * @param tasks The ArrayList of tasks to be saved.
+     * @param filename The name of the external file to which the task list will be saved.
+     */
 
     public static void saveToFile(ArrayList<Task> tasks, String filename) {
         StringBuilder out = new StringBuilder();
@@ -26,13 +54,19 @@ public class Edith {
         }
     }
 
+    /**
+     * Returns a Task object from a string. Used for reading saved task lists from external files.
+     *
+     * @param s A String representing a single task.
+     * @return A corresponding Task object.
+     */
+
     public static Task parseTask(String s) {
         Task out;
         char type = s.charAt(4);
-        char isDone = s.charAt(7);
+        char done = s.charAt(7);
 
         if (type == 'T') {
-            String[] tmp = s.split(" ");
             String desc = s.substring(10);
             out =  new Task(desc);
         } else if (type == 'D') {
@@ -48,11 +82,17 @@ public class Edith {
             String desc = s.substring(10, s.indexOf('(')-1);
             out = new Event(desc, from, to);
         }
-        if (isDone == 'X') {
+        if (done == 'X') {
             out.markAsDone();
         }
         return out;
     }
+
+    /**
+     * Body code for the chatbot.
+     *
+     * @param args User input.
+     */
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -60,11 +100,9 @@ public class Edith {
                 + "\nhello! this is edith :D"
                 + "\nwhat do we need today?"
                 + "\n==================================";
-        String exit_message = "=================================="
+        String exitMessage = "=================================="
                 + "\njiayousss bye have a great time"
                 + "\n==================================";
-
-
 
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -94,7 +132,7 @@ public class Edith {
                 Command cmd = Command.fromString(inps[0]);
 
                 if (cmd == Command.BYE) {
-                    System.out.println(exit_message);
+                    System.out.println(exitMessage);
                     break;
 
                 } else if (cmd == Command.LIST) {

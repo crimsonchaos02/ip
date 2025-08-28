@@ -1,10 +1,23 @@
+package edith;
+
+/**
+ * Representing the possible commands that users can input to Edith.
+ */
+
 public enum Command {
     LIST, CMDS, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, BYE;
 
-    public static Command fromString(String s) throws EdithException {
+    /**
+     * Returns a Command object from user input.
+     *
+     * @param s Command string input by user.
+     * @return Corresponding Command object.
+     */
+
+    public static Command fromString(String s) {
         switch (s) {
             case "bye": return BYE;
-            case "list": return LIST;
+            case "list": case "ls": return LIST;
             case "cmd": return CMDS;
             case "mark": return MARK;
             case "unmark": return UNMARK;
