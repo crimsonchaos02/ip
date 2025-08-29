@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Handles the saving and loading of the task list to the output file.
+ */
 public class Storage {
     private final String fileName;
 
@@ -31,6 +34,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads the task list from the file.
+     * @return The required task list.
+     * @throws EdithException if the file is corrupted (wrong format) or missing.
+     */
     public ArrayList<Task> loadFromFile() throws EdithException {
         ArrayList<Task> tasks = new ArrayList<>();
 
