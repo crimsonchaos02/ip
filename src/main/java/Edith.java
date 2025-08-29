@@ -1,5 +1,3 @@
-package edith;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -9,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.Scanner;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAdjusters;
+import java.time.LocalDateTime;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 /**
  * Main code of the Edith chatbot.
@@ -50,7 +55,7 @@ public class Edith {
             writer.write(out.toString());
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -61,7 +66,7 @@ public class Edith {
      * @return A corresponding Task object.
      */
 
-    public static Task parseTask(String s) {
+    public static Task parseTask(String s) throws EdithException {
         Task out;
         char type = s.charAt(4);
         char done = s.charAt(7);
@@ -71,14 +76,33 @@ public class Edith {
             out =  new Task(desc);
         } else if (type == 'D') {
             String[] tmp = s.split(", due by: ");
-            String due = tmp[1];
+            String dueDate = tmp[1];
+            if (dueDate.split(" ").length == 2) {
+                dueDate = "this " + dueDate;
+            }
+            LocalDateTime due = parseDateTime(dueDate);
             String desc = tmp[0].substring(10);
             out = new Deadline(desc, due);
 
         } else {
             String[] tmp = s.split("from: | to: " );
-            String from = tmp[1];
-            String to = tmp[2].substring(0, tmp[2].length()-1);
+            LocalDateTime from = parseDateTime(tmp[1]);
+
+            String[] endParser = tmp[2].split(" ");
+            LocalDateTime to;
+            if (endParser.length == 1) {
+                try {
+                    to = from.with(LocalTime.parse(tmp[2], DateTimeFormatter.ofPattern("HHmm")));
+                } catch (DateTimeParseException e) {
+                    throw new EdithException("please use HHmm format for your times");
+                }
+            } else if (endParser.length == 2) {
+                to = parseDateTime("this " + tmp[2]);
+            } else if (endParser.length == 3) {
+                to = parseDateTime(tmp[2]);
+            } else {
+                throw new EdithException("please fix your end time format");
+            }
             String desc = s.substring(10, s.indexOf('(')-1);
             out = new Event(desc, from, to);
         }
@@ -86,6 +110,100 @@ public class Edith {
             out.markAsDone();
         }
         return out;
+    }
+
+    /**
+     * Returns DayOfWeek object given an input string. Helper function for parseDateTime
+     *
+     * @param s Input string. Allows sensible abbreviations.
+     * @return Corresponding DayOfWeek object.
+     */
+
+    public static DayOfWeek parseDay(String s) {
+        if (s == null) {
+            return null;
+        }
+        return switch (s.trim().toUpperCase()) {
+            case "MONDAY", "MON", "MOND" -> DayOfWeek.MONDAY;
+            case "TUESDAY", "TUE", "TUES" -> DayOfWeek.TUESDAY;
+            case "WEDNESDAY", "WEDS", "WED" -> DayOfWeek.WEDNESDAY;
+            case "THURSDAY", "THURS", "THU", "THUR" -> DayOfWeek.THURSDAY;
+            case "FRIDAY", "FRI" -> DayOfWeek.FRIDAY;
+            case "SATURDAY", "SAT" -> DayOfWeek.SATURDAY;
+            case "SUNDAY", "SUN" -> DayOfWeek.SUNDAY;
+            default -> null;
+        };
+    }
+
+    /**
+     * Returns a LocalDateTime object from user input.
+     *
+     * @param s User input. Can either be relative (limited to "this" or "next")
+     *          or "dd/mm/yyyy/HHmm". Time follows 24-hour time format.
+     * @return Corresponding LocalDateTime object.
+     * @throws EdithException if format is not followed
+     */
+    public static LocalDateTime parseDateTime(String s) throws EdithException {
+        String ERROR_MESSAGE = "syntax error. please use EITHER 'dd/MM/yyyy/HHmm' " +
+                "with optional 24-hour time (HHmm), \n" +
+                "OR 'this'/'next' followed by a day of the week, optionally with time (HHmm).\n" +
+                "If omitted, time will be set to a default of noon.";
+
+        String[] relative = s.split(" ");
+        String[] dateTime = s.split("[/T:]");
+
+        if (relative[0].equals("this")) {
+            DayOfWeek day = parseDay(relative[1]);
+            if (day == null) {
+                throw new EdithException(ERROR_MESSAGE);
+            }
+            LocalTime time = LocalTime.of(12, 0);
+            if (relative.length == 3) {
+                try {
+                    time = LocalTime.parse(relative[2], DateTimeFormatter.ofPattern("HHmm"));
+                } catch (DateTimeParseException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            LocalDateTime now = LocalDateTime.now();
+            return now.with(TemporalAdjusters.nextOrSame(day)).with(time);
+
+        } else if (relative[0].equals("next")) {
+            DayOfWeek day = parseDay(relative[1]);
+            if (day == null) {
+                throw new EdithException(ERROR_MESSAGE);
+            }
+            LocalTime time = LocalTime.of(12, 0);
+            if (relative.length == 3) {
+                try {
+                    time = LocalTime.parse(relative[2], DateTimeFormatter.ofPattern("HHmm"));
+                } catch (DateTimeParseException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            LocalDateTime now = LocalDateTime.now();
+            return now.with(TemporalAdjusters.next(day)).with(time);
+
+        } else if (dateTime.length == 3) {
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            try {
+                return LocalDateTime.parse(s, format);
+            } catch (DateTimeParseException e) {
+                throw new EdithException(ERROR_MESSAGE);
+            }
+
+        } else if (dateTime.length == 4) {
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy/HHmm");
+            try {
+                return LocalDateTime.parse(s, format);
+            } catch (DateTimeParseException e) {
+                throw new EdithException(ERROR_MESSAGE);
+            }
+        } else {
+            throw new EdithException(ERROR_MESSAGE);
+        }
+
+
     }
 
     /**
@@ -117,9 +235,10 @@ public class Edith {
                 Task t = parseTask(next);
                 tasks.add(t);
             }
-
         } catch (FileNotFoundException e) {
             System.out.println("Note -- no saved task list found.");
+        } catch (EdithException e) {
+            System.out.println(pad(e.getMessage()));
         }
 
         System.out.println(greeting);
@@ -205,7 +324,8 @@ public class Edith {
                     String description = String.join(" ",
                             Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
                     //basically just removing the command word from the description phrase
-                    tasks.add(new Deadline(description, tmp[1]));
+                    LocalDateTime dueDate = parseDateTime(tmp[1]);
+                    tasks.add(new Deadline(description, dueDate));
                     System.out.println(pad("added new deadline:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
                     saveToFile(tasks, "output.txt");
@@ -222,7 +342,26 @@ public class Edith {
 
                     String description = String.join(" ",
                             Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
-                    tasks.add(new Event(description, tmp[1], tmp[2]));
+
+                    LocalDateTime start = parseDateTime(tmp[1]);
+
+                    String[] endParser = tmp[2].split(" ");
+                    LocalDateTime end;
+                    if (endParser.length == 1) {
+                        try {
+                            end = start.with(LocalTime.parse(tmp[2], DateTimeFormatter.ofPattern("HHmm")));
+                        } catch (DateTimeParseException e) {
+                            throw new EdithException("please use HHmm format for your times");
+                        }
+                    } else if (endParser.length == 2) {
+                        end = parseDateTime("this " + tmp[2]);
+                    } else if (endParser.length == 3) {
+                        end = parseDateTime(tmp[2]);
+                    } else {
+                        throw new EdithException("please fix your end time format");
+                    }
+
+                    tasks.add(new Event(description, start, end));
                     System.out.println(pad("added new event:\n" + tasks.get(tasks.size() - 1).toString()
                             + "\nyou have " + tasks.size() + " tasks left"));
                     saveToFile(tasks, "output.txt");
