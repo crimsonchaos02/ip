@@ -1,3 +1,1 @@
-1. [T][ ] 2106 lab1 tut1
-2. [D][ ] 2108 hw1, due by: today 2359
-3. [E][ ] ulti bbq (from: sunday 1600 to: 2000)
+1. [D][ ] test1, due by: saturday 2359
