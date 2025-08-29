@@ -1,3 +1,5 @@
+package edith;
+
 /**
  * Represents a task, or a to-do item on the user's task list.
  * A Task has a description and may be marked as done.
