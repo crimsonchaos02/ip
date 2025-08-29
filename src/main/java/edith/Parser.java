@@ -8,6 +8,10 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 
+/**
+ * This class parses user input.
+ */
+
 public class Parser {
 
     /**
@@ -177,6 +181,15 @@ public class Parser {
         }
         return out;
     }
+
+    /**
+     * Returns a Task object from user input. Only called if user wishes to input tasks.
+     *
+     * @param c Command object indicating which type of task to be input.
+     * @param inp User input with relevant details.
+     * @return New corresponding Task object.
+     * @throws EdithException if there are formatting errors in the user input.
+     */
 
     public static Task parseTaskInput(Command c, String inp) throws EdithException {
         if (c == Command.TODO) {

@@ -12,6 +12,12 @@ public class Edith {
     private TaskList tasks;
     private Ui ui;
 
+    /**
+     * Creates new Edith chatbot instance.
+     *
+     * @param fileName Output file from which task lists are loaded and saved.
+     *
+     */
     public Edith(String fileName) {
         this.ui = new Ui();
         this.storage = new Storage(fileName);
@@ -19,9 +25,13 @@ public class Edith {
             this.tasks = new TaskList(storage.loadFromFile());
         } catch (EdithException e) {
             this.tasks = new TaskList(new ArrayList<>());
-            ui.handleError(e.getMessage());
+            System.out.println("load error: your task list is now re-initialised");
         }
     }
+
+    /**
+     * Main logic code of the chatbot.
+     */
 
     public void run() {
         ui.greeting();
@@ -94,7 +104,7 @@ public class Edith {
 
 
     /**
-     * Body code for the chatbot.
+     * Runs an instance of the Edith chatbot.
      *
      * @param args User input.
      */

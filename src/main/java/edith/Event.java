@@ -27,6 +27,14 @@ public class Event extends Task {
         this.end = end;
     }
 
+    /**
+     * Returns an appropriate string representation of the start and end times of the event.
+     *
+     * @param start LocalDateTime object representing event start.
+     * @param end LocalDateTime object representing event end.
+     * @return Appropriate string representation.
+     */
+
     public String convertToString(LocalDateTime start, LocalDateTime end) {
         LocalDateTime now = LocalDateTime.now();
         String startTime = start.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm"));

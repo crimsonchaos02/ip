@@ -24,6 +24,13 @@ public class Deadline extends Task {
         this.dueDate = dueDate;
     }
 
+    /**
+     * Returns string representation of due date.
+     *
+     * @param dueBy LocalDateTime object indicating the deadline.
+     * @return Appropriate string representation.
+     */
+
     public String parseDate(LocalDateTime dueBy) {
         LocalDateTime now = LocalDateTime.now();
         String dueTime = dueBy.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm"));

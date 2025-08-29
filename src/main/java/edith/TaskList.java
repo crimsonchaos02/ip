@@ -2,13 +2,26 @@ package edith;
 
 import java.util.ArrayList;
 
+/**
+ * This class handles issues related to the task list -- marking/unmarking, adding/deleting tasks.
+ */
 public class TaskList {
     private ArrayList<Task> tasks;
+
+    /**
+     * Constructs new Tasklist object.
+     * @param tasks List of tasks.
+     */
 
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
+    /**
+     * Adds a task to the task list, and returns the appropriate message to the user.
+     * @param t The task to be added.
+     * @return Apprropriate message for user.
+     */
     public String addTask (Task t) {
         this.tasks.add(t);
         StringBuilder out = new StringBuilder();
@@ -26,6 +39,13 @@ public class TaskList {
 
         return out.toString();
     }
+
+    /**
+     * Removes a task from the task list, and returns apprropriate message for user.
+     * @param i Index of task to be removed.
+     * @return Apprropriate message for user.
+     * @throws EdithException if index out of range.
+     */
 
     public String removeTask (int i) throws EdithException {
         String taskDescr = "";
@@ -46,6 +66,13 @@ public class TaskList {
         return out.toString();
     }
 
+    /**
+     * Marks a task as done, and returns apprropriate message for user.
+     * @param i index of task to be marked done.
+     * @return Apprropriate message for user.
+     * @throws EdithException if index out of bounds.
+     */
+
     public String markDone (int i) throws EdithException {
         if (i < 0 || i >= tasks.size()) {
             throw new EdithException("enter a valid index -- that's not in the to do list range");
@@ -54,6 +81,13 @@ public class TaskList {
 
         return "good job buddy you finished task:\n" + tasks.get(i).toString();
     }
+
+    /**
+     * Marks a task as undone, and returns apprropriate message for user.
+     * @param i index of task to be marked undone.
+     * @return Apprropriate message for user.
+     * @throws EdithException if index out of range.
+     */
 
     public String markUndone (int i) throws EdithException {
         if (i < 0 || i >= tasks.size()) {
