@@ -97,6 +97,18 @@ public class TaskList {
         return "alright then we reopening task:\n" + tasks.get(i).toString();
     }
 
+    public TaskList searchTasks(String keyWords) {
+        ArrayList<Task> outList = new ArrayList<>();
+
+        for (Task t : tasks) {
+            String description = t.getDescription();
+            if (description.toLowerCase().contains(keyWords.toLowerCase())) {
+                outList.add(t);
+            }
+        }
+        return new TaskList(outList);
+    }
+
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();

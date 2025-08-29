@@ -91,6 +91,10 @@ public class Edith {
                     String out = tasks.removeTask(index);
                     ui.printMsg(out);
                     storage.saveToFile(tasks);
+                } else if (cmd == Command.FIND) {
+                    String searchKeywords = inp.substring(5);
+                    TaskList out = tasks.searchTasks(searchKeywords);
+                    ui.printMsg(out.toString());
                 } else {
                     throw new EdithException("get your formatting right thanks (type cmd/cmds for valid commands)");
                 }

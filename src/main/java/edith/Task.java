@@ -29,11 +29,21 @@ public class Task {
     }
 
     /**
-     * Sets isDone to be true.
+     * Sets isDone to be false.
      */
 
     public void markAsUndone() {
         this.isDone = false;
+    }
+
+    /**
+     * Returns task description.
+     *
+     * @return the task description
+     */
+
+    public String getDescription() {
+        return this.description;
     }
 
     @Override

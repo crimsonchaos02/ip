@@ -4,5 +4,5 @@ package edith;
  */
 
 public enum Command {
-    LIST, CMDS, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, BYE;
+    LIST, CMDS, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, BYE, FIND;
 }
