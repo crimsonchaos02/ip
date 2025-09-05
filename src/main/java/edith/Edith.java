@@ -10,6 +10,7 @@ public class Edith {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
+    private Logic logic;
 
     /**
      * Creates new Edith chatbot instance.
@@ -22,9 +23,25 @@ public class Edith {
         this.storage = new Storage(fileName);
         try {
             this.tasks = new TaskList(storage.loadFromFile());
+            this.logic = new Logic(storage, tasks);
         } catch (EdithException e) {
             this.tasks = new TaskList(new ArrayList<>());
+            this.logic = new Logic(storage, tasks);
             System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Given a user input, get the appropriate response. Used for GUI.
+     * @param s
+     * @return
+     * @throws EdithException
+     */
+    public String getResponse(String s) throws EdithException {
+        try {
+            return this.logic.getResponse(s);
+        } catch (EdithException e) {
+            return e.getMessage();
         }
     }
 
@@ -38,64 +55,10 @@ public class Edith {
         while (true) {
             try {
                 String inp = ui.getInput();
-                String[] inps = inp.split(" ");
-
-                Command cmd = Parser.fromString(inps[0]);
-
-                if (cmd == Command.BYE) {
-                    ui.exit();
+                String out = logic.getResponse(inp);
+                ui.printMsg(out);
+                if (Parser.fromString(inp.split(" ")[0]) == Command.BYE) {
                     break;
-
-                } else if (cmd == Command.LIST) {
-                    ui.printMsg(tasks.toString());
-                } else if (cmd == Command.CMDS) {
-                    String outMsg = "commands list:"
-                            + "\nuse list to show your current tasks"
-                            + "\nuse mark i to mark task i as done"
-                            + "\nuse unmark i to mark task i as undone"
-                            + "\nuse todo to add a task"
-                            + "\nuse deadline to add a deadline (/by to specify due date)"
-                            + "\nuse event to add an event (/from and /by to specify details)"
-                            + "\nuse bye to exit the chatbot";
-                    ui.printMsg(outMsg);
-
-                } else if (cmd == Command.MARK) {
-                    if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to mark done (use list to check)");
-                    }
-                    int index = Integer.parseInt(inps[1]) - 1;
-                    String out = tasks.markDone(index);
-                    ui.printMsg(out);
-                    storage.saveToFile(tasks);
-
-                } else if (cmd == Command.UNMARK) {
-                    if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to mark done (use list to check)");
-                    }
-                    int index = Integer.parseInt(inps[1]) - 1;
-                    String out = tasks.markUndone(index);
-                    ui.printMsg(out);
-                    storage.saveToFile(tasks);
-
-                } else if (cmd == Command.TODO || cmd == Command.DEADLINE || cmd == Command.EVENT) {
-                    Task newTask = Parser.parseTaskInput(cmd, inp);
-                    String out = tasks.addTask(newTask);
-                    ui.printMsg(out);
-                    storage.saveToFile(tasks);
-                } else if (cmd == Command.DELETE) {
-                    if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to delete (use list to find index)");
-                    }
-                    int index = Integer.parseInt(inps[1]) - 1;
-                    String out = tasks.removeTask(index);
-                    ui.printMsg(out);
-                    storage.saveToFile(tasks);
-                } else if (cmd == Command.FIND) {
-                    String searchKeywords = inp.substring(5);
-                    TaskList out = tasks.searchTasks(searchKeywords);
-                    ui.printMsg(out.toString());
-                } else {
-                    throw new EdithException("get your formatting right thanks (type cmd/cmds for valid commands)");
                 }
             } catch (EdithException e) {
                 ui.handleError(e.getMessage());
@@ -106,7 +69,6 @@ public class Edith {
         }
     }
 
-
     /**
      * Runs an instance of the Edith chatbot.
      *
@@ -114,6 +76,6 @@ public class Edith {
      */
 
     public static void main(String[] args) {
-        new Edith("output.txt").run();
+        System.out.println("hello");
     }
 }

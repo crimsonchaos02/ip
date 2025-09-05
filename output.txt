@@ -1,5 +1,5 @@
 1. [T][ ] 2106 lab2
-2. [D][ ] 2103 week4 iP, due by: today 1600
+2. [D][X] 2103 week4 iP, due by: today 1600
 3. [T][ ] 2108 w3 lecture1
 4. [T][ ] 2108 w3lecture2
 5. [T][ ] 2108 w4 lecture 1
