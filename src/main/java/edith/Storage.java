@@ -56,7 +56,7 @@ public class Storage {
         } catch (FileNotFoundException e) {
             throw new EdithException("file not found. starting with empty task list.");
         } catch (EdithException e) {
-            throw new EdithException("error loading from file -- file corrupted");
+            throw new EdithException("load error: your task list is now re-initialised");
         }
         return tasks;
     }

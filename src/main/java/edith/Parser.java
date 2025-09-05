@@ -20,8 +20,8 @@ public class Parser {
      * @param s Command string input by user.
      * @return Corresponding Command object.
      */
-
     public static Command fromString(String s) {
+        //CHECKSTYLE.OFF: Indentation
         return switch (s) {
             case "bye" -> Command.BYE;
             case "list", "ls" -> Command.LIST;
@@ -70,10 +70,12 @@ public class Parser {
      */
 
     public static LocalDateTime parseDateTime(String s) throws EdithException {
-        String ERROR_MESSAGE = "syntax error. please use EITHER 'dd/MM/yyyy/HHmm' " +
-                "with optional 24-hour time (HHmm), \n" +
-                "OR 'this'/'next' followed by a day of the week, optionally with time (HHmm).\n" +
-                "If omitted, time will be set to a default of noon.";
+        //CHECKSTYLE.OFF: AbbreviationAsWordInName
+        //CHECKSTYLE.OFF: LocalVariableName
+        String ERROR_MESSAGE = "syntax error. please use EITHER 'dd/MM/yyyy/HHmm' "
+                + "with optional 24-hour time (HHmm), \n"
+                + "OR 'this'/'next' followed by a day of the week, optionally with time (HHmm).\n"
+                + "If omitted, time will be set to a default of noon.";
 
         String[] relative = s.split(" ");
         String[] dateTime = s.split("[/T:]");
@@ -139,24 +141,28 @@ public class Parser {
 
     public static Task parseTask(String s) throws EdithException {
         Task out;
-        char type = s.charAt(4);
-        char done = s.charAt(7);
+        char type = s.split("\\. ")[1].charAt(1);
+        char done = s.split("\\. ")[1].charAt(4);
 
         if (type == 'T') {
-            String desc = s.substring(10);
-            out =  new Task(desc);
+            String desc = s.split("\\] ")[1];
+            out = new Task(desc);
         } else if (type == 'D') {
             String[] tmp = s.split(", due by: ");
             String dueDate = tmp[1];
+            if (dueDate.split(" ")[0].equals("today")) {
+                String day = LocalDateTime.now().getDayOfWeek().toString();
+                dueDate = "this " + day + dueDate.substring(5);
+            }
             if (dueDate.split(" ").length == 2) {
                 dueDate = "this " + dueDate;
             }
             LocalDateTime due = parseDateTime(dueDate);
-            String desc = tmp[0].substring(10);
+            String desc = tmp[0].split("\\] ")[1];
             out = new Deadline(desc, due);
 
         } else {
-            String[] tmp = s.split("from: | to: " );
+            String[] tmp = s.split("from: | to: ");
             LocalDateTime from = parseDateTime(tmp[1]);
 
             String[] endParser = tmp[2].split(" ");
@@ -174,7 +180,7 @@ public class Parser {
             } else {
                 throw new EdithException("please fix your end time format");
             }
-            String desc = s.substring(10, s.indexOf('(')-1);
+            String desc = s.split("\\] ")[1].substring(0, s.split("\\] ")[1].indexOf('(') - 1);
             out = new Event(desc, from, to);
         }
         if (done == 'X') {

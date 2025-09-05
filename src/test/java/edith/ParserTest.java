@@ -1,13 +1,13 @@
 package edith;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import org.junit.jupiter.api.Test;
 
 public class ParserTest {
     @Test
@@ -36,16 +36,16 @@ public class ParserTest {
     public void taskListTest1() {
         ArrayList<Task> tmp = new ArrayList<>();
         tmp.add(new Task("test1"));
-        tmp.add(new Deadline("test2", LocalDateTime.of(2025,8,30,12,0)));
+        tmp.add(new Deadline("test2", LocalDateTime.of(2025, 8, 30, 12, 0)));
         LocalDateTime start = LocalDateTime.of(2025, 8, 31, 18, 0);
         LocalDateTime end = LocalDateTime.of(2025, 8, 31, 22, 0);
         tmp.add(new Event("test3", start, end));
 
         TaskList toStrTest = new TaskList(tmp);
 
-        String expected = "1. [T][ ] test1\n" +
-                "2. [D][ ] test2, due by: saturday 1200\n" +
-                "3. [E][ ] test3 (from: sunday 1800 to: 2200)";
+        String expected = "1. [T][ ] test1\n"
+                + "2. [D][ ] test2, due by: saturday 1200\n"
+                + "3. [E][ ] test3 (from: sunday 1800 to: 2200)";
 
         assertEquals(toStrTest.toString(), expected);
     }
@@ -54,7 +54,7 @@ public class ParserTest {
     public void taskListTest2() {
         ArrayList<Task> tmp = new ArrayList<>();
         tmp.add(new Task("test1"));
-        tmp.add(new Deadline("test2", LocalDateTime.of(2025,8,30,12,0)));
+        tmp.add(new Deadline("test2", LocalDateTime.of(2025, 8, 30, 12, 0)));
         LocalDateTime start = LocalDateTime.of(2025, 8, 31, 18, 0);
         LocalDateTime end = LocalDateTime.of(2025, 8, 31, 22, 0);
         tmp.add(new Event("test3", start, end));
@@ -67,7 +67,7 @@ public class ParserTest {
             assertEquals(markDoneTest.markDone(0), expected);
         } catch (Exception e) {
             fail("parseDateTime failed on valid input.");
-        };
+        }
     }
 
 }

@@ -1,5 +1,4 @@
 package edith;
-
 import java.util.ArrayList;
 
 /**
@@ -25,7 +24,7 @@ public class Edith {
             this.tasks = new TaskList(storage.loadFromFile());
         } catch (EdithException e) {
             this.tasks = new TaskList(new ArrayList<>());
-            System.out.println("load error: your task list is now re-initialised");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -62,7 +61,7 @@ public class Edith {
 
                 } else if (cmd == Command.MARK) {
                     if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to mark done (use list to find index)");
+                        throw new EdithException("please enter index of the task to mark done (use list to check)");
                     }
                     int index = Integer.parseInt(inps[1]) - 1;
                     String out = tasks.markDone(index);
@@ -71,7 +70,7 @@ public class Edith {
 
                 } else if (cmd == Command.UNMARK) {
                     if (!inps[1].matches("-?\\d+")) {
-                        throw new EdithException("please enter index of the task to mark done (use list to find index)");
+                        throw new EdithException("please enter index of the task to mark done (use list to check)");
                     }
                     int index = Integer.parseInt(inps[1]) - 1;
                     String out = tasks.markUndone(index);
@@ -103,6 +102,7 @@ public class Edith {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+
         }
     }
 

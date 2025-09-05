@@ -22,7 +22,7 @@ public class TaskList {
      * @param t The task to be added.
      * @return Apprropriate message for user.
      */
-    public String addTask (Task t) {
+    public String addTask(Task t) {
         this.tasks.add(t);
         StringBuilder out = new StringBuilder();
         out.append("added new ");
@@ -47,9 +47,9 @@ public class TaskList {
      * @throws EdithException if index out of range.
      */
 
-    public String removeTask (int i) throws EdithException {
+    public String removeTask(int i) throws EdithException {
         String taskDescr = "";
-        if (i >= tasks.size() || i  < 0) {
+        if (i >= tasks.size() || i < 0) {
             throw new EdithException("please use valid task number!");
         } else {
             taskDescr = this.tasks.get(i).toString();
@@ -73,7 +73,7 @@ public class TaskList {
      * @throws EdithException if index out of bounds.
      */
 
-    public String markDone (int i) throws EdithException {
+    public String markDone(int i) throws EdithException {
         if (i < 0 || i >= tasks.size()) {
             throw new EdithException("enter a valid index -- that's not in the to do list range");
         }
@@ -89,7 +89,7 @@ public class TaskList {
      * @throws EdithException if index out of range.
      */
 
-    public String markUndone (int i) throws EdithException {
+    public String markUndone(int i) throws EdithException {
         if (i < 0 || i >= tasks.size()) {
             throw new EdithException("enter a valid index -- that's not in the to do list range");
         }
@@ -97,6 +97,11 @@ public class TaskList {
         return "alright then we reopening task:\n" + tasks.get(i).toString();
     }
 
+    /**
+     * Returns a new TaskList with the relevant keywords
+     * @param keyWords the search term entered by the user.
+     * @return a new TaskList object with tasks containing these words.
+     */
     public TaskList searchTasks(String keyWords) {
         ArrayList<Task> outList = new ArrayList<>();
 
@@ -118,8 +123,8 @@ public class TaskList {
             out.append(tasks.get(i).toString());
             out.append("\n");
         }
-        if(!out.isEmpty()){
-            return out.deleteCharAt(out.length()-1).toString();
+        if (!out.isEmpty()) {
+            return out.deleteCharAt(out.length() - 1).toString();
         } else {
             return out.toString();
         }
