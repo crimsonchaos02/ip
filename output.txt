@@ -1,1 +1,11 @@
-1. [D][ ] test1, due by: saturday 2359
+1. [T][ ] 2106 lab2
+2. [D][ ] 2103 week4 iP, due by: today 1600
+3. [T][ ] 2108 w3 lecture1
+4. [T][ ] 2108 w3lecture2
+5. [T][ ] 2108 w4 lecture 1
+6. [T][ ] 2108 w4 lecture 2
+7. [T][ ] 3230 w3 lecture
+8. [T][ ] 3230 w4 lecture
+9. [T][ ] 2106 w2 lecture
+10. [T][ ] 2106 w3 lecture
+11. [T][ ] 2106 w4 lecture

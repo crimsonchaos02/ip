@@ -7,12 +7,16 @@ import java.util.Scanner;
  */
 
 public class Ui {
+    //CHECKSTYLE.OFF: AbbreviationAsWordInName
+    //CHECKSTYLE.OFF: MemberName
     private final String GREETING_MESSAGE;
     private final String EXIT_MESSAGE;
     private Scanner scanner;
+    //CHECKSTYLE.ON: AbbreviationAsWordInName
+    //CHECKSTYLE.On: MemberName
 
     /**
-     * Constructs a ui instance.
+     *  * Constructs a ui instance.
      */
     public Ui() {
         this.GREETING_MESSAGE = "=================================="
