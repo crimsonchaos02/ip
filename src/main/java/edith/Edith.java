@@ -34,7 +34,7 @@ public class Edith {
     /**
      * Given a user input, get the appropriate response. Used for GUI.
      * @param s
-     * @return
+     * @return appropriate String
      * @throws EdithException
      */
     public String getResponse(String s) throws EdithException {
