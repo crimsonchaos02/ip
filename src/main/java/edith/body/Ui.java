@@ -1,4 +1,4 @@
-package edith;
+package edith.body;
 
 import java.util.Scanner;
 

@@ -1,4 +1,9 @@
-package edith;
+package edith.body;
+
+import edith.task.Task;
+import edith.util.Command;
+import edith.util.EdithException;
+
 
 /**
  * Handles the program logic.

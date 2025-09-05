@@ -1,4 +1,4 @@
-package edith;
+package edith.body;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -7,6 +7,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
+
+import edith.task.Deadline;
+import edith.task.Event;
+import edith.task.Task;
+import edith.util.Command;
+import edith.util.EdithException;
+
+
 
 /**
  * This class parses user input.

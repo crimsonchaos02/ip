@@ -1,4 +1,4 @@
-package edith;
+package edith.gui;
 
 import javafx.application.Application;
 

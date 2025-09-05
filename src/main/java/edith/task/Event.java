@@ -1,4 +1,4 @@
-package edith;
+package edith.task;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

@@ -1,5 +1,7 @@
-package edith;
+package edith.gui;
 
+import edith.Edith;
+import edith.util.EdithException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;

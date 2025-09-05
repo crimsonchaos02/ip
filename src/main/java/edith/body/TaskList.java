@@ -1,6 +1,10 @@
-package edith;
+package edith.body;
 
 import java.util.ArrayList;
+
+import edith.task.Task;
+import edith.util.EdithException;
+
 
 /**
  * This class handles issues related to the task list -- marking/unmarking, adding/deleting tasks.

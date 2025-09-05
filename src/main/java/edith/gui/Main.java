@@ -1,7 +1,8 @@
-package edith;
+package edith.gui;
 
 import java.io.IOException;
 
+import edith.Edith;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,4 +1,4 @@
-package edith;
+package edith.task;
 
 /**
  * Represents a task, or a to-do item on the user's task list.

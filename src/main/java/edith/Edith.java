@@ -1,5 +1,14 @@
 package edith;
+
 import java.util.ArrayList;
+
+import edith.body.Logic;
+import edith.body.Parser;
+import edith.body.Storage;
+import edith.body.TaskList;
+import edith.body.Ui;
+import edith.util.Command;
+import edith.util.EdithException;
 
 /**
  * Main code of the Edith chatbot.
@@ -72,7 +81,7 @@ public class Edith {
     /**
      * Runs an instance of the Edith chatbot.
      *
-     * @param args User input.
+     * @param args CLI user input.
      */
 
     public static void main(String[] args) {

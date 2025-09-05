@@ -1,4 +1,5 @@
-package edith;
+package edith.body;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import edith.task.Task;
+import edith.util.EdithException;
+
 
 /**
  * Handles the saving and loading of the task list to the output file.

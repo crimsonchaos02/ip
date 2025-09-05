@@ -1,4 +1,4 @@
-package edith;
+package edith.util;
 /**
  * Representing the possible commands that users can input to Edith.
  */
