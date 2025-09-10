@@ -55,7 +55,7 @@ public class Storage {
                 if (next.equals("\n")) {
                     break;
                 }
-                Task t = Parser.parseTask(next);
+                Task t = Parser.parseTaskFromFile(next);
                 tasks.add(t);
             }
         } catch (FileNotFoundException e) {
