@@ -50,8 +50,8 @@ public class Logic {
                 case BYE -> new ExitCommand(this.storage, this.tasks);
                 case LIST -> new ListCommand(this.storage, this.tasks);
                 case HELP -> new HelpCommand(this.storage, this.tasks);
-                case MARK -> new MarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
-                case UNMARK -> new UnmarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
+                case MARK -> new MarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]) - 1);
+                case UNMARK -> new UnmarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]) - 1);
                 case TODO -> new NewTaskCommand(this.storage, this.tasks, new Task(inps[1]));
                 case DEADLINE -> new NewDeadlineCommand(
                         this.storage,
@@ -61,7 +61,7 @@ public class Logic {
                         this.storage,
                         this.tasks,
                         new Event(inps[1], LocalDateTime.parse(inps[2]), LocalDateTime.parse(inps[3])));
-                case DELETE -> new DeleteCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
+                case DELETE -> new DeleteCommand(this.storage, this.tasks, Integer.parseInt(inps[1]) - 1);
                 case FIND -> new FindCommand(
                         this.storage,
                         this.tasks,

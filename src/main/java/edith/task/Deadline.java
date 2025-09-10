@@ -40,7 +40,9 @@ public class Deadline extends Task {
         DayOfWeek dueDay = dueBy.getDayOfWeek();
         String out;
 
-        LocalDate nextSunday = now.toLocalDate().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        LocalDate nextSunday = now.toLocalDate()
+                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+                .plusWeeks(1);
         LocalDateTime cutoff = nextSunday.plusDays(1).atStartOfDay();
         if (dueBy.isAfter(cutoff)) {
             out = dueBy.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
@@ -49,7 +51,7 @@ public class Deadline extends Task {
         } else if (dueDay.getValue() <= today.getValue()) {
             out = "next " + dueDay.toString().toLowerCase() + " " + dueTime;
         } else {
-            out = dueDay.toString().toLowerCase() + " this " + dueTime;
+            out = "this " + dueDay.toString().toLowerCase() + " " + dueTime;
         }
         if (now.isAfter(dueBy)) {
             out += " (OVERDUE!!!)";

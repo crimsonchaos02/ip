@@ -75,12 +75,19 @@ public class Parser {
     public static LocalDateTime parseDateTimeRelative(String s) throws EdithException {
         //CHECKSTYLE.OFF: AbbreviationAsWordInName
         //CHECKSTYLE.OFF: LocalVariableName
-        String ERROR_MESSAGE = "syntax error. please use 'this'/'next' followed by a day of the week, "
+        String ERROR_MESSAGE = "syntax error. please use 'today/'this'/'next' followed by a day of the week, "
                 + "optionally with time (HHmm)."
                 + "\n If omitted, time will be set to a default of noon.";
         String[] strList = s.split(" ");
 
-        if (strList[0].equals("this")) {
+        if (strList[0].equals("today")) {
+            try {
+                LocalTime time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
+                return LocalDateTime.now().with(time);
+            } catch (DateTimeParseException e) {
+                throw new EdithException("boi please check your time format");
+            }
+        } else if (strList[0].equals("this")) {
             DayOfWeek day = parseDay(strList[1]);
             if (day == null) {
                 throw new EdithException(ERROR_MESSAGE);
@@ -125,6 +132,7 @@ public class Parser {
     public static LocalDateTime parseDateTimeFormatted(String s) throws EdithException {
         String[] dateTime = s.split("[/T:]");
         String ERROR_MESSAGE = "syntax error. please use 'dd/MM/yyyy/HHmm' with optional 24-hour time (HHmm). ";
+
         if (dateTime.length == 3) {
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             try {
@@ -145,7 +153,7 @@ public class Parser {
     }
 
     /**
-     * Returns a LocalDateTime object from user input.
+     * Returns a LocalDateTime object from a string.
      *
      * @param s User input. Can either be relative (limited to "this" or "next")
      *          or "dd/mm/yyyy/HHmm". Time follows 24-hour time format.
@@ -158,6 +166,9 @@ public class Parser {
         String[] dateTime = s.split("[/T:]");
         assert (relative.length > 1 || dateTime.length > 1) : "error in DateTime input!";
 
+        if (isValidDateTime(s)) {
+            return LocalDateTime.parse(s, DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
+        }
         try {
             if (relative.length > 1) {
                 return parseDateTimeRelative(s);
@@ -190,13 +201,6 @@ public class Parser {
         String[] tmp = s.split(", due by: ");
         assert tmp.length == 2 : "error in due date format";
         String dueDate = tmp[1];
-        if (dueDate.split(" ")[0].equals("today")) {
-            String day = LocalDateTime.now().getDayOfWeek().toString();
-            dueDate = "this " + day + dueDate.substring(5);
-        }
-        if (dueDate.split(" ").length == 2) {
-            dueDate = "this " + dueDate;
-        }
         try {
             LocalDateTime due = parseDateTime(dueDate);
             String desc = tmp[0].split("\\] ")[1];
@@ -220,7 +224,9 @@ public class Parser {
 
         String[] endParser = tmp[2].split(" ");
         LocalDateTime to;
-        if (endParser.length == 1) {
+        if (isValidDateTime(tmp[2])) {
+            to = LocalDateTime.parse(tmp[2]);
+        } else if (endParser.length == 1) {
             try {
                 to = from.with(LocalTime.parse(tmp[2], DateTimeFormatter.ofPattern("HHmm")));
             } catch (DateTimeParseException e) {
@@ -238,6 +244,21 @@ public class Parser {
     }
 
     /**
+     * Helper function. Checks if an input string is of the form "dd MMM yyyy HHmm"
+     * @param input String to be checked.
+     * @return true if matches the format, false if not.
+     */
+    public static boolean isValidDateTime(String input) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HHmm");
+        try {
+            LocalDateTime.parse(input, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    /**
      * Returns a Task object from a string. Used for reading saved task lists from external files.
      *
      * @param s A String representing a single task.
@@ -251,12 +272,16 @@ public class Parser {
 
         assert (type == 'T' || type == 'D' || type == 'E') : "error: Task String error";
 
-        if (type == 'T') {
-            out = parseTodo(s);
-        } else if (type == 'D') {
-            out = parseDeadline(s);
-        } else {
-            out = parseEvent(s);
+        try {
+            if (type == 'T') {
+                out = parseTodo(s);
+            } else if (type == 'D') {
+                out = parseDeadline(s);
+            } else {
+                out = parseEvent(s);
+            }
+        } catch (EdithException e) {
+            throw new EdithException(e.getMessage());
         }
 
         if (done == 'X') {
@@ -313,7 +338,7 @@ public class Parser {
         }
 
         if (tmp[0].split(" ").length == 1) {
-            throw new EdithException("include a task description");
+            throw new EdithException("please include a task description");
         }
 
         String description = String.join(" ",
@@ -374,6 +399,7 @@ public class Parser {
 
         StringBuilder out = new StringBuilder();
         out.append(inps[0]);
+        out.append(" ");
 
         if (cmd == CommandType.MARK || cmd == CommandType.UNMARK || cmd == CommandType.DELETE) {
             if (inps.length < 2) {
@@ -393,8 +419,7 @@ public class Parser {
             if (inps.length == 1) {
                 throw new EdithException("please enter valid keywords to search");
             }
-            out.append(String.join(" ",
-                    Arrays.copyOfRange(inps, 1, inps.length)));
+            return inp;
         }
         return out.toString();
     }

@@ -12,5 +12,5 @@
 12. [T][ ] 2108 w5 lecture1
 13. [D][ ] 2106 lab2, due by: next tuesday 1200
 14. [D][ ] 2101 ca1, due by: next monday 1200
-15. [D][ ] 3230 programming assignment, due by: friday 2359
-16. [D][ ] 2103 iP deliverables, due by: friday 1600
+15. [D][ ] 3230 programming assignment, due by: this friday 2359
+16. [D][ ] 2103 iP deliverables, due by: this friday 1600

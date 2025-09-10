@@ -46,7 +46,9 @@ public class Event extends Task {
 
         DayOfWeek from = start.getDayOfWeek();
         String fromStr;
-        LocalDate nextSunday = now.toLocalDate().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        LocalDate nextSunday = now.toLocalDate()
+                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+                .plusWeeks(1);
         LocalDateTime cutoff = nextSunday.plusDays(1).atStartOfDay();
         if (start.isAfter(cutoff)) {
             fromStr = start.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
@@ -55,7 +57,7 @@ public class Event extends Task {
         } else if (from.getValue() <= today.getValue()) {
             fromStr = "next " + from.toString().toLowerCase() + " " + startTime;
         } else {
-            fromStr = from.toString().toLowerCase() + " this " + startTime;
+            fromStr = "this " + from.toString().toLowerCase() + " " + startTime;
         }
 
         String toStr;
