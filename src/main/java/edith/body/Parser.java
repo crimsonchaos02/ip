@@ -85,7 +85,7 @@ public class Parser {
 
         String[] relative = s.split(" ");
         String[] dateTime = s.split("[/T:]");
-
+        assert (relative.length > 1 || dateTime.length > 1) : "error in DateTime input!";
         if (relative[0].equals("this")) {
             DayOfWeek day = parseDay(relative[1]);
             if (day == null) {
@@ -150,11 +150,14 @@ public class Parser {
         char type = s.split("\\. ")[1].charAt(1);
         char done = s.split("\\. ")[1].charAt(4);
 
+        assert (type == 'T' || type == 'D' || type == 'E') : "error: Task String input error";
+
         if (type == 'T') {
             String desc = s.split("\\] ")[1];
             out = new Task(desc);
         } else if (type == 'D') {
             String[] tmp = s.split(", due by: ");
+            assert tmp.length == 2 : "error in due date format";
             String dueDate = tmp[1];
             if (dueDate.split(" ")[0].equals("today")) {
                 String day = LocalDateTime.now().getDayOfWeek().toString();
@@ -169,6 +172,7 @@ public class Parser {
 
         } else {
             String[] tmp = s.split("from: | to: ");
+            assert tmp.length >= 2 : "error: from/to input String is not in the right format";
             LocalDateTime from = parseDateTime(tmp[1]);
 
             String[] endParser = tmp[2].split(" ");
@@ -206,6 +210,7 @@ public class Parser {
      */
 
     public static String parseTaskInput(CommandType c, String inp) throws EdithException {
+        assert c == CommandType.TODO || c == CommandType.DEADLINE || c == CommandType.EVENT : "wrong usage of method!";
         if (c == CommandType.TODO) {
             String[] inps = inp.split(" ");
             if (inps.length == 1) {

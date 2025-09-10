@@ -78,6 +78,7 @@ public class TaskList {
      * @return a new TaskList object with tasks containing these words.
      */
     public String searchTasks(String keyWords) {
+        assert !keyWords.isEmpty() : "error: cannot search for empty string";
         ArrayList<Task> outList = new ArrayList<>();
 
         for (Task t : tasks) {
