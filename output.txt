@@ -1,11 +1,16 @@
-1. [T][ ] 2106 lab2
-2. [D][X] 2103 week4 iP, due by: today 1600
-3. [T][ ] 2108 w3 lecture1
-4. [T][ ] 2108 w3lecture2
-5. [T][ ] 2108 w4 lecture 1
-6. [T][ ] 2108 w4 lecture 2
-7. [T][ ] 3230 w3 lecture
-8. [T][ ] 3230 w4 lecture
-9. [T][ ] 2106 w2 lecture
-10. [T][ ] 2106 w3 lecture
-11. [T][ ] 2106 w4 lecture
+1. [T][ ] 2108 w3 lecture1
+2. [T][ ] 2108 w3lecture2
+3. [T][ ] 2108 w4 lecture 1
+4. [T][ ] 2108 w4 lecture 2
+5. [T][ ] 3230 w3 lecture
+6. [T][ ] 3230 w4 lecture
+7. [T][ ] 2106 w2 lecture
+8. [T][ ] 2106 w3 lecture
+9. [T][ ] 2106 w4 lecture
+10. [T][ ] 2106 w5 lecture
+11. [T][ ] 3230 w5 lecture
+12. [T][ ] 2108 w5 lecture1
+13. [D][ ] 2106 lab2, due by: next tuesday 1200
+14. [D][ ] 2101 ca1, due by: next monday 1200
+15. [D][ ] 3230 programming assignment, due by: friday 2359
+16. [D][ ] 2103 iP deliverables, due by: friday 1600

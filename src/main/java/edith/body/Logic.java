@@ -1,8 +1,25 @@
 package edith.body;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
+import edith.command.Command;
+import edith.command.DeleteCommand;
+import edith.command.ExitCommand;
+import edith.command.FindCommand;
+import edith.command.HelpCommand;
+import edith.command.ListCommand;
+import edith.command.MarkCommand;
+import edith.command.NewDeadlineCommand;
+import edith.command.NewEventCommand;
+import edith.command.NewTaskCommand;
+import edith.command.UnmarkCommand;
+import edith.task.Deadline;
+import edith.task.Event;
 import edith.task.Task;
-import edith.util.Command;
+import edith.util.CommandType;
 import edith.util.EdithException;
+
 
 
 /**
@@ -22,66 +39,49 @@ public class Logic {
         this.tasks = t;
     }
 
+    public Command getCommandFromString(String s) throws EdithException {
+        String[] inps = s.split(" ");
+        CommandType cmd = Parser.getCommandTypeFromString(inps[0]);
+        //CHECKSTYLE.OFF: Indentation
+        try {
+            return switch (cmd) {
+                case BYE -> new ExitCommand(this.storage, this.tasks);
+                case LIST -> new ListCommand(this.storage, this.tasks);
+                case HELP -> new HelpCommand(this.storage, this.tasks);
+                case MARK -> new MarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
+                case UNMARK -> new UnmarkCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
+                case TODO -> new NewTaskCommand(this.storage, this.tasks, new Task(inps[1]));
+                case DEADLINE -> new NewDeadlineCommand(
+                        this.storage,
+                        this.tasks,
+                        new Deadline(inps[1], LocalDateTime.parse(inps[2])));
+                case EVENT -> new NewEventCommand(
+                        this.storage,
+                        this.tasks,
+                        new Event(inps[1], LocalDateTime.parse(inps[2]), LocalDateTime.parse(inps[3])));
+                case DELETE -> new DeleteCommand(this.storage, this.tasks, Integer.parseInt(inps[1]));
+                case FIND -> new FindCommand(
+                        this.storage,
+                        this.tasks,
+                        String.join(" ", Arrays.copyOfRange(inps, 1, inps.length)));
+            };
+        } catch (EdithException e) {
+            throw new EdithException(e.getMessage());
+        }
+    }
+
     /**
      * Used to obtain the appropriate response given a user input.
      *
      * @param inp the user input.
      * @return the appropriate response from Edith.
      */
-    public String getResponse(String inp) throws EdithException {
-        String out = "";
+    public String handleInput(String inp) throws EdithException {
         try {
-            String[] inps = inp.split(" ");
-            Command cmd = Parser.fromString(inps[0]);
-
-            if (cmd == Command.BYE) {
-                out = "=================================="
-                        + "\njiayousss bye have a great time"
-                        + "\n==================================";
-            } else if (cmd == Command.LIST) {
-                out = this.tasks.toString();
-            } else if (cmd == Command.CMDS) {
-                out = "commands list:"
-                        + "\nuse list to show your current tasks"
-                        + "\nuse mark i to mark task i as done"
-                        + "\nuse unmark i to mark task i as undone"
-                        + "\nuse todo to add a task"
-                        + "\nuse deadline to add a deadline (/by to specify due date)"
-                        + "\nuse event to add an event (/from and /by to specify details)"
-                        + "\nuse bye to exit the chatbot";
-            } else if (cmd == Command.MARK) {
-                if (!inps[1].matches("-?\\d+")) {
-                    throw new EdithException("please enter index of the task to mark done (use list to check)");
-                }
-                int index = Integer.parseInt(inps[1]) - 1;
-                out = tasks.markDone(index);
-                storage.saveToFile(tasks);
-            } else if (cmd == Command.UNMARK) {
-                if (!inps[1].matches("-?\\d+")) {
-                    throw new EdithException("please enter index of the task to mark done (use list to check)");
-                }
-                int index = Integer.parseInt(inps[1]) - 1;
-                out = tasks.markUndone(index);
-                storage.saveToFile(tasks);
-            } else if (cmd == Command.TODO || cmd == Command.DEADLINE || cmd == Command.EVENT) {
-                Task newTask = Parser.parseTaskInput(cmd, inp);
-                out = tasks.addTask(newTask);
-                storage.saveToFile(tasks);
-            } else if (cmd == Command.DELETE) {
-                if (!inps[1].matches("-?\\d+")) {
-                    throw new EdithException("please enter index of the task to delete (use list to find index)");
-                }
-                int index = Integer.parseInt(inps[1]) - 1;
-                out = tasks.removeTask(index);
-                storage.saveToFile(tasks);
-            } else if (cmd == Command.FIND) {
-                String searchKeywords = inp.substring(5);
-                TaskList requiredTasks = tasks.searchTasks(searchKeywords);
-                out = requiredTasks.toString();
-            } else {
-                throw new EdithException("get your formatting right thanks (type cmd/cmds for valid commands)");
-            }
-            return out;
+            String readableCommand = Parser.parseInput(inp);
+            Command newCommand = getCommandFromString(readableCommand);
+            newCommand.run();
+            return newCommand.getMessage();
         } catch (EdithException e) {
             return e.getMessage();
         }

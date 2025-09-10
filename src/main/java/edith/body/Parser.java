@@ -11,10 +11,8 @@ import java.util.Arrays;
 import edith.task.Deadline;
 import edith.task.Event;
 import edith.task.Task;
-import edith.util.Command;
+import edith.util.CommandType;
 import edith.util.EdithException;
-
-
 
 /**
  * This class parses user input.
@@ -23,24 +21,24 @@ import edith.util.EdithException;
 public class Parser {
 
     /**
-     * Returns a Command object from user input.
+     * Returns a CommandType object from user input.
      *
-     * @param s Command string input by user.
-     * @return Corresponding Command object.
+     * @param s CommandType string input by user.
+     * @return Corresponding CommandType object.
      */
-    public static Command fromString(String s) {
+    public static CommandType getCommandTypeFromString(String s) {
         //CHECKSTYLE.OFF: Indentation
         return switch (s) {
-            case "bye" -> Command.BYE;
-            case "list", "ls" -> Command.LIST;
-            case "cmd" -> Command.CMDS;
-            case "mark" -> Command.MARK;
-            case "unmark" -> Command.UNMARK;
-            case "todo" -> Command.TODO;
-            case "deadline" -> Command.DEADLINE;
-            case "event" -> Command.EVENT;
-            case "delete", "del" -> Command.DELETE;
-            case "find" -> Command.FIND;
+            case "bye" -> CommandType.BYE;
+            case "list", "ls" -> CommandType.LIST;
+            case "help" -> CommandType.HELP;
+            case "mark" -> CommandType.MARK;
+            case "unmark" -> CommandType.UNMARK;
+            case "todo" -> CommandType.TODO;
+            case "deadline" -> CommandType.DEADLINE;
+            case "event" -> CommandType.EVENT;
+            case "delete", "del" -> CommandType.DELETE;
+            case "find" -> CommandType.FIND;
             default -> null;
         };
     }
@@ -198,24 +196,25 @@ public class Parser {
     }
 
     /**
-     * Returns a Task object from user input. Only called if user wishes to input tasks.
+     * Used to obtain readable Task details from user input. Helper function for parseInput. Only
+     * applies to creation of new Tasks.
      *
-     * @param c Command object indicating which type of task to be input.
+     * @param c CommandType object indicating which type of task to be input.
      * @param inp User input with relevant details.
-     * @return New corresponding Task object.
+     * @return Appropriate String representation.
      * @throws EdithException if there are formatting errors in the user input.
      */
 
-    public static Task parseTaskInput(Command c, String inp) throws EdithException {
-        if (c == Command.TODO) {
+    public static String parseTaskInput(CommandType c, String inp) throws EdithException {
+        if (c == CommandType.TODO) {
             String[] inps = inp.split(" ");
             if (inps.length == 1) {
                 throw new EdithException("please include a task description");
             }
             String description = String.join(" ",
                     Arrays.copyOfRange(inps, 1, inps.length));
-            return new Task(description);
-        } else if (c == Command.DEADLINE) {
+            return description;
+        } else if (c == CommandType.DEADLINE) {
             String[] tmp = inp.split(" /by ");
             if (tmp.length == 1) {
                 throw new EdithException("woi please use '/by' indicating the deadline");
@@ -227,7 +226,7 @@ public class Parser {
                     Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
             LocalDateTime dueDate = parseDateTime(tmp[1]);
 
-            return new Deadline(description, dueDate);
+            return description + " " + dueDate.toString();
         } else {
             String[] tmp = inp.split(" /from | /to ");
             if (tmp.length == 1) {
@@ -258,9 +257,48 @@ public class Parser {
             } else {
                 throw new EdithException("please fix your end time format");
             }
-            return new Event(description, start, end);
+            return description + " " + start.toString() + " " + end.toString();
         }
     }
 
+    /**
+     * Parses user input into a readable format for Logic class to handle.
+     * @param inp user input
+     * @return a String representation of user input such that it can be parsed into a new Command.
+     * @throws EdithException if there is input format issue.
+     */
+    public static String parseInput(String inp) throws EdithException {
+        String[] inps = inp.split(" ");
+        CommandType cmd = Parser.getCommandTypeFromString(inps[0]);
+        if (cmd == null) {
+            throw new EdithException("please enter a valid command (type 'help' to see all commands)");
+        }
+
+        StringBuilder out = new StringBuilder();
+        out.append(inps[0]);
+
+        if (cmd == CommandType.MARK || cmd == CommandType.UNMARK || cmd == CommandType.DELETE) {
+            if (inps.length < 2) {
+                throw new EdithException("please enter a valid task index");
+            }
+            if (!inps[1].matches("-?\\d+")) {
+                throw new EdithException("please enter a valid integer task index");
+            }
+            out.append(inps[1]);
+        }
+
+        if (cmd == CommandType.TODO || cmd == CommandType.DEADLINE || cmd == CommandType.EVENT) {
+            out.append(parseTaskInput(cmd, inp));
+        }
+
+        if (cmd == CommandType.FIND) {
+            if (inps.length == 1) {
+                throw new EdithException("please enter valid keywords to search");
+            }
+            out.append(String.join(" ",
+                    Arrays.copyOfRange(inps, 1, inps.length)));
+        }
+        return out.toString();
+    }
 
 }

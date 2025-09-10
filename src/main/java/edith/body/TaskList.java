@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import edith.task.Task;
 import edith.util.EdithException;
 
-
 /**
  * This class handles issues related to the task list -- marking/unmarking, adding/deleting tasks.
  */
@@ -22,83 +21,55 @@ public class TaskList {
     }
 
     /**
-     * Adds a task to the task list, and returns the appropriate message to the user.
-     * @param t The task to be added.
-     * @return Apprropriate message for user.
-     */
-    public String addTask(Task t) {
-        this.tasks.add(t);
-        StringBuilder out = new StringBuilder();
-        out.append("added new ");
-        out.append(t.toString().charAt(1) == 'T'
-                ? "task:\n"
-                : t.toString().charAt(1) == 'E'
-                ? "event:\n"
-                : "deadline:\n");
-
-        out.append(t);
-        out.append("\nyou have ");
-        out.append(tasks.size());
-        out.append(" tasks left");
-
-        return out.toString();
-    }
-
-    /**
-     * Removes a task from the task list, and returns apprropriate message for user.
-     * @param i Index of task to be removed.
-     * @return Apprropriate message for user.
-     * @throws EdithException if index out of range.
-     */
-
-    public String removeTask(int i) throws EdithException {
-        String taskDescr = "";
-        if (i >= tasks.size() || i < 0) {
-            throw new EdithException("please use valid task number!");
-        } else {
-            taskDescr = this.tasks.get(i).toString();
-            this.tasks.remove(i);
-        }
-
-        StringBuilder out = new StringBuilder();
-        out.append("okay we removed:\n");
-        out.append(taskDescr);
-        out.append("\nyou have ");
-        out.append(tasks.size());
-        out.append(" tasks left");
-
-        return out.toString();
-    }
-
-    /**
-     * Marks a task as done, and returns apprropriate message for user.
-     * @param i index of task to be marked done.
-     * @return Apprropriate message for user.
+     * Returns a Task object corresponding to its index on the TaskList.
+     * @param i Input index.
      * @throws EdithException if index out of bounds.
      */
 
-    public String markDone(int i) throws EdithException {
+    public Task getTask(Integer i) throws EdithException {
         if (i < 0 || i >= tasks.size()) {
-            throw new EdithException("enter a valid index -- that's not in the to do list range");
+            throw new EdithException("please use valid task number!");
         }
-        tasks.get(i).markAsDone();
+        return tasks.get(i);
+    }
 
-        return "good job buddy you finished task:\n" + tasks.get(i).toString();
+    public int getSize() {
+        return this.tasks.size();
     }
 
     /**
-     * Marks a task as undone, and returns apprropriate message for user.
-     * @param i index of task to be marked undone.
-     * @return Apprropriate message for user.
-     * @throws EdithException if index out of range.
+     * Adds a task to the task list, and returns the appropriate message to the user.
+     * @param t The task to be added.
+     */
+    public void addTask(Task t) {
+        this.tasks.add(t);
+    }
+
+    /**
+     * Removes a task from the task list, and returns appropriate message for user.
+     * @param i Index of task to be removed.
      */
 
-    public String markUndone(int i) throws EdithException {
-        if (i < 0 || i >= tasks.size()) {
-            throw new EdithException("enter a valid index -- that's not in the to do list range");
-        }
-        tasks.get(i).markAsUndone();
-        return "alright then we reopening task:\n" + tasks.get(i).toString();
+    public void removeTask(int i) {
+        this.tasks.remove(i);
+    }
+
+    /**
+     * Marks a task as done, and returns appropriate message for user.
+     * @param t index of task to be marked done.
+     */
+
+    public void markDone(Task t) {
+        t.markAsDone();
+    }
+
+    /**
+     * Marks a task as undone, and returns appropriate message for user.
+     * @param t Task to be marked undone.
+     */
+
+    public void markUndone(Task t) {
+        t.markAsUndone();
     }
 
     /**
@@ -106,7 +77,7 @@ public class TaskList {
      * @param keyWords the search term entered by the user.
      * @return a new TaskList object with tasks containing these words.
      */
-    public TaskList searchTasks(String keyWords) {
+    public String searchTasks(String keyWords) {
         ArrayList<Task> outList = new ArrayList<>();
 
         for (Task t : tasks) {
@@ -115,7 +86,7 @@ public class TaskList {
                 outList.add(t);
             }
         }
-        return new TaskList(outList);
+        return new TaskList(outList).toString();
     }
 
     @Override

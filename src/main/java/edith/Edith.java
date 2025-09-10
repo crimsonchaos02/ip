@@ -7,7 +7,7 @@ import edith.body.Parser;
 import edith.body.Storage;
 import edith.body.TaskList;
 import edith.body.Ui;
-import edith.util.Command;
+import edith.util.CommandType;
 import edith.util.EdithException;
 
 /**
@@ -48,7 +48,7 @@ public class Edith {
      */
     public String getResponse(String s) throws EdithException {
         try {
-            return this.logic.getResponse(s);
+            return this.logic.handleInput(s);
         } catch (EdithException e) {
             return e.getMessage();
         }
@@ -64,9 +64,9 @@ public class Edith {
         while (true) {
             try {
                 String inp = ui.getInput();
-                String out = logic.getResponse(inp);
+                String out = logic.handleInput(inp);
                 ui.printMsg(out);
-                if (Parser.fromString(inp.split(" ")[0]) == Command.BYE) {
+                if (Parser.getCommandTypeFromString(inp.split(" ")[0]) == CommandType.BYE) {
                     break;
                 }
             } catch (EdithException e) {
@@ -85,6 +85,6 @@ public class Edith {
      */
 
     public static void main(String[] args) {
-        System.out.println("hello");
+        new Edith("output.txt").run();
     }
 }
