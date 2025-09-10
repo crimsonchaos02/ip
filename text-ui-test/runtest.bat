@@ -1,21 +1,43 @@
-@ECHO OFF
+@echo off
+setlocal enabledelayedexpansion
 
-REM create bin directory if it doesn't exist
-if not exist ..\bin mkdir ..\bin
+:: Define paths
+set SRC_DIR=..\src\main\java
+set BIN_DIR=..\bin
+set INPUT_FILE=input.txt
+set EXPECTED_FILE=EXPECTED.TXT
+set ACTUAL_FILE=ACTUAL.TXT
 
-REM delete output from previous run
-if exist ACTUAL.TXT del ACTUAL.TXT
+:: Create bin directory if it doesn't exist
+if not exist "%BIN_DIR%" mkdir "%BIN_DIR%"
 
-REM compile the code into the bin folder
-javac  -cp ..\src\main\java -Xlint:none -d ..\bin ..\src\main\java\*.java
-IF ERRORLEVEL 1 (
+:: Compile all Java files recursively
+set SOURCES=
+for /r "%SRC_DIR%" %%f in (*.java) do (
+    set SOURCES=!SOURCES! "%%f"
+)
+if not defined SOURCES (
+    echo No Java source files found!
+    exit /b 1
+)
+javac -d "%BIN_DIR%" !SOURCES!
+if %errorlevel% neq 0 (
     echo ********** BUILD FAILURE **********
     exit /b 1
 )
-REM no error here, errorlevel == 0
 
-REM run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT
-java -classpath ..\bin Edith < input.txt > ACTUAL.TXT
+:: Delete previous output
+if exist "%ACTUAL_FILE%" del "%ACTUAL_FILE%"
 
-REM compare the output to the expected output
-FC ACTUAL.TXT EXPECTED.TXT
+:: Run the program
+java -classpath "%BIN_DIR%" Duke < "%INPUT_FILE%" > "%ACTUAL_FILE%"
+
+:: Compare the output to the expected output
+fc "%ACTUAL_FILE%" "%EXPECTED_FILE%" > nul
+if %errorlevel%==0 (
+    echo Test result: PASSED
+    exit /b 0
+) else (
+    echo Test result: FAILED
+    exit /b 1
+)
