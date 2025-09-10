@@ -1,8 +1,10 @@
 package edith.task;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 
 /**
  * Represents an event on the user's task list.
@@ -44,16 +46,22 @@ public class Event extends Task {
 
         DayOfWeek from = start.getDayOfWeek();
         String fromStr;
-        if (now.toLocalDate().equals(start.toLocalDate())) {
+        LocalDate nextSunday = now.toLocalDate().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        LocalDateTime cutoff = nextSunday.plusDays(1).atStartOfDay();
+        if (start.isAfter(cutoff)) {
+            fromStr = start.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
+        } else if (now.toLocalDate().equals(start.toLocalDate())) {
             fromStr = "today " + startTime;
         } else if (from.getValue() <= today.getValue()) {
             fromStr = "next " + from.toString().toLowerCase() + " " + startTime;
         } else {
-            fromStr = from.toString().toLowerCase() + " " + startTime;
+            fromStr = from.toString().toLowerCase() + " this " + startTime;
         }
 
         String toStr;
-        if (start.toLocalDate().equals(end.toLocalDate())) {
+        if (end.isAfter(cutoff)) {
+            toStr = end.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
+        } else if (start.toLocalDate().equals(end.toLocalDate())) {
             toStr = endTime;
         } else {
             toStr = end.getDayOfWeek().toString().toLowerCase() + " " + endTime;

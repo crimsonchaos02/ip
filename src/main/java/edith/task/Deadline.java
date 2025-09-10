@@ -1,8 +1,10 @@
 package edith.task;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 
 /**
  * Represents a deadline on the user's task list.
@@ -34,20 +36,25 @@ public class Deadline extends Task {
     public String parseDate(LocalDateTime dueBy) {
         LocalDateTime now = LocalDateTime.now();
         String dueTime = dueBy.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm"));
-
         DayOfWeek today = now.getDayOfWeek();
-
         DayOfWeek dueDay = dueBy.getDayOfWeek();
         String out;
-        if (now.toLocalDate().equals(dueBy.toLocalDate())) {
+
+        LocalDate nextSunday = now.toLocalDate().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        LocalDateTime cutoff = nextSunday.plusDays(1).atStartOfDay();
+        if (dueBy.isAfter(cutoff)) {
+            out = dueBy.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
+        } else if (now.toLocalDate().equals(dueBy.toLocalDate())) {
             out = "today " + dueTime;
         } else if (dueDay.getValue() <= today.getValue()) {
             out = "next " + dueDay.toString().toLowerCase() + " " + dueTime;
         } else {
-            out = dueDay.toString().toLowerCase() + " " + dueTime;
+            out = dueDay.toString().toLowerCase() + " this " + dueTime;
+        }
+        if (now.isAfter(dueBy)) {
+            out += " (OVERDUE!!!)";
         }
         return out;
-
     }
 
     @Override

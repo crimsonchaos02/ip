@@ -20,8 +20,6 @@ import edith.task.Task;
 import edith.util.CommandType;
 import edith.util.EdithException;
 
-
-
 /**
  * Handles the program logic.
  */
@@ -42,6 +40,9 @@ public class Logic {
     public Command getCommandFromString(String s) throws EdithException {
         String[] inps = s.split(" ");
         CommandType cmd = Parser.getCommandTypeFromString(inps[0]);
+        if (cmd == null) {
+            throw new EdithException("please use a valid command (type help for command list)");
+        }
         //CHECKSTYLE.OFF: Indentation
         try {
             return switch (cmd) {
