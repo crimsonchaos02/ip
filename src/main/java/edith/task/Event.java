@@ -72,6 +72,16 @@ public class Event extends Task {
     }
 
     @Override
+    public boolean isOn(LocalDateTime date) {
+        return end.toLocalDate().isEqual(date.toLocalDate());
+    }
+
+    @Override
+    public boolean isBefore(LocalDateTime date) {
+        return end.toLocalDate().isBefore(date.toLocalDate()) || isOn(date);
+    }
+
+    @Override
     public String toString() {
         String icon = this.isDone ? "X" : " ";
         return "[E][" + icon + "] " + this.description + convertToString(this.start, this.end);

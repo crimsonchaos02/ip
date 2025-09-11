@@ -1,5 +1,6 @@
 package edith.body;
 
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -14,6 +15,7 @@ import edith.command.NewDeadlineCommand;
 import edith.command.NewEventCommand;
 import edith.command.NewTaskCommand;
 import edith.command.UnmarkCommand;
+import edith.command.ViewCommand;
 import edith.task.Deadline;
 import edith.task.Event;
 import edith.task.Task;
@@ -66,6 +68,11 @@ public class Logic {
                         this.storage,
                         this.tasks,
                         String.join(" ", Arrays.copyOfRange(inps, 1, inps.length)));
+                case VIEW -> new ViewCommand(
+                        this.storage,
+                        this.tasks,
+                        inps[1],
+                        LocalDateTime.parse(inps[2]));
             };
         } catch (EdithException e) {
             throw new EdithException(e.getMessage());

@@ -1,7 +1,11 @@
 package edith.body;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import edith.task.Deadline;
+import edith.task.Event;
 import edith.task.Task;
 import edith.util.EdithException;
 
@@ -88,6 +92,54 @@ public class TaskList {
             }
         }
         return new TaskList(outList).toString();
+    }
+
+    /**
+     * Helper function for view function. Handles the formatting of the tasks.
+     * @param s StringBuilder object containing output text.
+     * @param t Task to be added to this object.
+     * @param index Index of the task to be added.
+     */
+    public static void formatTaskForOutput(StringBuilder s, Task t, Integer index) {
+        s.append(index);
+        s.append(". ");
+        s.append(t.toString());
+        s.append("\n");
+    }
+
+    /**
+     * Returns a list of tasks due either on a certain date or up to it.
+     * @param date The required date.
+     * @param decision Based on user input, choose whether up to a date or before it.
+     * @return The required output to the user.
+     */
+
+    public String viewScheduled(LocalDateTime date, String decision) {
+        StringBuilder scheduled = new StringBuilder();
+        StringBuilder undated = new StringBuilder();
+        int scheduledIndex = 1;
+        int undatedIndex = 1;
+
+        for (Task t : tasks) {
+            if (!(t instanceof Deadline) && !(t instanceof Event)) {
+                formatTaskForOutput(undated, t, undatedIndex);
+                undatedIndex += 1;
+            }
+            assert decision.equals("for") || decision.equals("before") : "decision format wrong";
+            if (decision.equals("for") && t.isOn(date)) {
+                formatTaskForOutput(scheduled, t, scheduledIndex);
+                scheduledIndex += 1;
+            } else if (t.isBefore(date)) {
+                formatTaskForOutput(scheduled, t, scheduledIndex);
+                scheduledIndex += 1;
+            }
+        }
+        return "Tasks due " + decision + " "
+                + date.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"))
+                + ":\n"
+                + scheduled.toString()
+                + "You have the following undated tasks:\n"
+                + undated.toString().trim();
     }
 
     @Override

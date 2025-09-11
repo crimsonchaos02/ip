@@ -42,9 +42,9 @@ public class Edith {
 
     /**
      * Given a user input, get the appropriate response. Used for GUI.
-     * @param s
+     * @param s user input.
      * @return appropriate String
-     * @throws EdithException
+     * @throws EdithException if response has bad formating.
      */
     public String getResponse(String s) throws EdithException {
         try {
