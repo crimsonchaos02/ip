@@ -39,6 +39,7 @@ public class Parser {
             case "event" -> CommandType.EVENT;
             case "delete", "del" -> CommandType.DELETE;
             case "find" -> CommandType.FIND;
+            case "view" -> CommandType.VIEW;
             default -> null;
         };
     }
@@ -155,8 +156,8 @@ public class Parser {
     /**
      * Returns a LocalDateTime object from a string.
      *
-     * @param s User input. Can either be relative (limited to "this" or "next")
-     *          or "dd/mm/yyyy/HHmm". Time follows 24-hour time format.
+     * @param s User input. Can either be relative (limited to "today" or "this" or "next")
+     *          or "dd/mm/yyyy/HHmm". Time field is optional and follows 24-hour time format.
      * @return Corresponding LocalDateTime object.
      * @throws EdithException if format is not followed
      */
@@ -420,6 +421,25 @@ public class Parser {
                 throw new EdithException("please enter valid keywords to search");
             }
             return inp;
+        }
+
+        if (cmd == CommandType.VIEW) {
+            if (inps.length == 1) {
+                throw new EdithException("please enter search terms");
+            } else if (!inps[1].equals("for") && (!inps[1].equals("before"))) {
+                throw new EdithException("please choose between 'view for' or 'view before' a certain date");
+            } else if (inps.length == 2) {
+                throw new EdithException("please enter a date!");
+            }
+            out.append(inps[1]);
+            out.append(" ");
+
+            try {
+                String dateStr = inp.split(" for | before ")[1];
+                out.append(parseDateTime(dateStr).toString());
+            } catch (EdithException e) {
+                throw new EdithException(e.getMessage());
+            }
         }
         return out.toString();
     }

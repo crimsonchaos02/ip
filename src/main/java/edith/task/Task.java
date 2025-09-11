@@ -1,5 +1,7 @@
 package edith.task;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents a task, or a to-do item on the user's task list.
  * A Task has a description and may be marked as done.
@@ -44,6 +46,14 @@ public class Task {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public boolean isOn(LocalDateTime date) {
+        return false;
+    }
+
+    public boolean isBefore(LocalDateTime date) {
+        return false;
     }
 
     @Override

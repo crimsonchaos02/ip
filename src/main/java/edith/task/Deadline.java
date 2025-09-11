@@ -38,6 +38,8 @@ public class Deadline extends Task {
         String dueTime = dueBy.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm"));
         DayOfWeek today = now.getDayOfWeek();
         DayOfWeek dueDay = dueBy.getDayOfWeek();
+        boolean isNextWeek = (dueBy.toLocalDate().toEpochDay() - now.toLocalDate().toEpochDay()) >= 7;
+
         String out;
 
         LocalDate nextSunday = now.toLocalDate()
@@ -48,7 +50,7 @@ public class Deadline extends Task {
             out = dueBy.format(DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
         } else if (now.toLocalDate().equals(dueBy.toLocalDate())) {
             out = "today " + dueTime;
-        } else if (dueDay.getValue() <= today.getValue()) {
+        } else if (isNextWeek) {
             out = "next " + dueDay.toString().toLowerCase() + " " + dueTime;
         } else {
             out = "this " + dueDay.toString().toLowerCase() + " " + dueTime;
@@ -57,6 +59,16 @@ public class Deadline extends Task {
             out += " (OVERDUE!!!)";
         }
         return out;
+    }
+
+    @Override
+    public boolean isOn(LocalDateTime date) {
+        return dueDate.toLocalDate().isEqual(date.toLocalDate());
+    }
+
+    @Override
+    public boolean isBefore(LocalDateTime date) {
+        return dueDate.toLocalDate().isBefore(date.toLocalDate()) || isOn(date);
     }
 
     @Override
