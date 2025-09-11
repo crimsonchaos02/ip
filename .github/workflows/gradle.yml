@@ -42,12 +42,6 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install dos2unix
 
-	- name: Make script executable
-  	run: chmod +x text-ui-test/runtest.sh
-
-	- name: Run tests
-  	run: ./text-ui-test/runtest.sh
-
       - name: Perform IO redirection test (*NIX or macOS)
         if: runner.os == 'Linux' || runner.os == 'macOS'
         working-directory: ${{ github.workspace }}/text-ui-test
