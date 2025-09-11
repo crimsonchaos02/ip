@@ -17,11 +17,6 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: master
-	- name: Make script executable
-  	run: chmod +x text-ui-test/runtest.sh
-
-	- name: Run tests
-  	run: ./text-ui-test/runtest.sh
 
       - name: Merge to master
         run: git checkout --progress --force ${{ github.sha }}
@@ -47,6 +42,11 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install dos2unix
 
+	- name: Make script executable
+  	run: chmod +x text-ui-test/runtest.sh
+
+	- name: Run tests
+  	run: ./text-ui-test/runtest.sh
 
       - name: Perform IO redirection test (*NIX or macOS)
         if: runner.os == 'Linux' || runner.os == 'macOS'
