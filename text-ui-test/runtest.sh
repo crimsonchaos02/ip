@@ -22,7 +22,7 @@ ACTUAL_FILE="ACTUAL.TXT"
 rm -f "$ACTUAL_FILE"
 
 # run the program
-java -classpath "$BIN_DIR" Duke < "$INPUT_FILE" > "$ACTUAL_FILE"
+java -classpath "$BIN_DIR" Edith < "$INPUT_FILE" > "$ACTUAL_FILE"
 
 # convert to UNIX format (if dos2unix exists)
 if command -v dos2unix >/dev/null 2>&1; then
