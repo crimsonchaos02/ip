@@ -10,7 +10,6 @@ public class Ui {
     //CHECKSTYLE.OFF: AbbreviationAsWordInName
     //CHECKSTYLE.OFF: MemberName
     private final String GREETING_MESSAGE;
-    private final String EXIT_MESSAGE;
     private Scanner scanner;
     //CHECKSTYLE.ON: AbbreviationAsWordInName
     //CHECKSTYLE.On: MemberName
@@ -22,10 +21,6 @@ public class Ui {
         this.GREETING_MESSAGE = "=================================="
                 + "\nhello! this is edith :D"
                 + "\nwhat do we need today?"
-                + "\n==================================";
-
-        this.EXIT_MESSAGE = "=================================="
-                + "\njiayousss bye have a great time"
                 + "\n==================================";
 
         this.scanner = new Scanner(System.in);
@@ -76,13 +71,5 @@ public class Ui {
 
     public void greeting() {
         System.out.println(GREETING_MESSAGE);
-    }
-
-    /**
-     * Closing output message to user.
-     */
-
-    public void exit() {
-        System.out.println(EXIT_MESSAGE);
     }
 }

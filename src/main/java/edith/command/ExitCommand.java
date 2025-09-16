@@ -17,8 +17,6 @@ public class ExitCommand extends Command {
     public void run() {}
 
     public String getMessage() {
-        return "=================================="
-                + "\njiayousss bye have a great time"
-                + "\n==================================";
+        return "jiayousss bye have a great time";
     }
 }
