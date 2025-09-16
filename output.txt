@@ -1,5 +1,5 @@
 1. [T][ ] 2108 w3 lecture1
-2. [T][ ] 2108 w3lecture2
+2. [T][ ] 2108 w3 lecture2
 3. [T][ ] 2108 w4 lecture 1
 4. [T][ ] 2108 w4 lecture 2
 5. [T][ ] 3230 w3 lecture
@@ -10,6 +10,5 @@
 10. [T][ ] 2106 w5 lecture
 11. [T][ ] 3230 w5 lecture
 12. [T][ ] 2108 w5 lecture1
-13. [D][ ] 2106 lab2, due by: this tuesday 1200
-14. [D][ ] 2101 ca1, due by: this monday 1200
-15. [D][ ] 2103 iP deliverables, due by: this friday 1600
+13. [D][ ] 2103 iP deliverables, due by: this friday 1600
+14. [D][ ] 2106 docs, due by: this sunday 2359

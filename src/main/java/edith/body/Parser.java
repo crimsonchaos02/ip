@@ -315,15 +315,14 @@ public class Parser {
         String[] tmp = inp.split(" /by ");
         if (tmp.length == 1) {
             throw new EdithException("woi please use '/by' indicating the deadline");
-        }
-        if (tmp[0].split(" ").length == 1) {
+        } else if (tmp[0].split(" ").length == 1) {
             throw new EdithException("woi include a task description");
         }
         String description = String.join(" ",
                 Arrays.copyOfRange(tmp[0].split(" "), 1, (tmp[0].split(" ").length)));
         LocalDateTime dueDate = parseDateTime(tmp[1]);
 
-        return description + " " + dueDate.toString();
+        return description + "#@!" + dueDate.toString();
     }
 
     /**
@@ -362,27 +361,7 @@ public class Parser {
         } else {
             throw new EdithException("please fix your end time format");
         }
-        return description + " " + start.toString() + " " + end.toString();
-    }
-    /**
-     * Used to obtain readable Task details from user input. Helper function for parseInput. Only
-     * applies to creation of new Tasks.
-     *
-     * @param c CommandType object indicating which type of task to be input.
-     * @param inp User input with relevant details.
-     * @return Appropriate String representation.
-     * @throws EdithException if there are formatting errors in the user input.
-     */
-
-    public static String parseTaskFromInput(CommandType c, String inp) throws EdithException {
-        assert c == CommandType.TODO || c == CommandType.DEADLINE || c == CommandType.EVENT : "wrong usage of method!";
-        if (c == CommandType.TODO) {
-            return parseTodoFromInput(inp);
-        } else if (c == CommandType.DEADLINE) {
-            return parseDeadlineFromInput(inp);
-        } else {
-            return parseEventFromInput(inp);
-        }
+        return description + "#@!" + start.toString() + "#@!" + end.toString();
     }
 
     /**
@@ -400,7 +379,7 @@ public class Parser {
 
         StringBuilder out = new StringBuilder();
         out.append(inps[0]);
-        out.append(" ");
+        out.append("#@!");
 
         if (cmd == CommandType.MARK || cmd == CommandType.UNMARK || cmd == CommandType.DELETE) {
             if (inps.length < 2) {
@@ -410,20 +389,21 @@ public class Parser {
                 throw new EdithException("please enter a valid integer task index");
             }
             out.append(inps[1]);
-        }
-
-        if (cmd == CommandType.TODO || cmd == CommandType.DEADLINE || cmd == CommandType.EVENT) {
-            out.append(parseTaskFromInput(cmd, inp));
-        }
-
-        if (cmd == CommandType.FIND) {
+        } else if (cmd == CommandType.TODO) {
+            out.append(parseTodoFromInput(inp));
+        } else if (cmd == CommandType.DEADLINE) {
+            out.append(parseDeadlineFromInput(inp));
+        } else if (cmd == CommandType.EVENT) {
+            out.append(parseEventFromInput(inp));
+        } else if (cmd == CommandType.FIND) {
             if (inps.length == 1) {
                 throw new EdithException("please enter valid keywords to search");
             }
-            return inp;
-        }
-
-        if (cmd == CommandType.VIEW) {
+            for (int i = 1; i < inps.length; i++) {
+                out.append(inps[i]);
+                out.append(" ");
+            }
+        } else if (cmd == CommandType.VIEW) {
             if (inps.length == 1) {
                 throw new EdithException("please enter search terms");
             } else if (!inps[1].equals("for") && (!inps[1].equals("before"))) {
@@ -432,7 +412,7 @@ public class Parser {
                 throw new EdithException("please enter a date!");
             }
             out.append(inps[1]);
-            out.append(" ");
+            out.append("#@!");
 
             try {
                 String dateStr = inp.split(" for | before ")[1];
@@ -441,7 +421,7 @@ public class Parser {
                 throw new EdithException(e.getMessage());
             }
         }
-        return out.toString();
+        return out.toString().trim();
     }
 
 }

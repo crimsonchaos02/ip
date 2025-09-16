@@ -40,7 +40,7 @@ public class Logic {
     }
 
     public Command getCommandFromString(String s) throws EdithException {
-        String[] inps = s.split(" ");
+        String[] inps = s.split("#@!");
         CommandType cmd = Parser.getCommandTypeFromString(inps[0]);
 
         if (cmd == null) {
