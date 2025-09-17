@@ -30,7 +30,7 @@ if %errorlevel% neq 0 (
 if exist "%ACTUAL_FILE%" del "%ACTUAL_FILE%"
 
 :: Run the program
-java -classpath "%BIN_DIR%" Edith < "%INPUT_FILE%" > "%ACTUAL_FILE%"
+java -classpath "%BIN_DIR%" edith.Edith < "%INPUT_FILE%" > "%ACTUAL_FILE%"
 
 :: Compare the output to the expected output
 fc "%ACTUAL_FILE%" "%EXPECTED_FILE%" > nul

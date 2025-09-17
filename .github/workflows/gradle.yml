@@ -45,7 +45,7 @@ jobs:
       - name: Perform IO redirection test (*NIX or macOS)
         if: runner.os == 'Linux' || runner.os == 'macOS'
         working-directory: ${{ github.workspace }}/text-ui-test
-        run: ./runtest.sh
+        run: chmod +x runtest.sh && ./runtest.sh
 
       - name: Perform IO redirection test (Windows)
         if: always() && runner.os == 'Windows'
