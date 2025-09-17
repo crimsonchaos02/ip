@@ -26,6 +26,7 @@ public class Main extends Application {
             Scene scene = new Scene(ap);
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setEdith(edith);
+            stage.setTitle("EDITH");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

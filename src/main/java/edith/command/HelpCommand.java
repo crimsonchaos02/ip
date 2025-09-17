@@ -24,6 +24,7 @@ public class HelpCommand extends Command {
                 + "\nuse deadline to add a deadline (/by to specify due date)"
                 + "\nuse event to add an event (/from and /by to specify details)"
                 + "\nuse find to search for tasks"
+                + "\nuse view (for/before) to check your schedule for/before a date"
                 + "\nuse bye to exit the chatbot";
     }
 }
