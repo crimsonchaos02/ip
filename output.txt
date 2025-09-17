@@ -2,13 +2,10 @@
 2. [T][ ] 2108 w3 lecture2
 3. [T][ ] 2108 w4 lecture 1
 4. [T][ ] 2108 w4 lecture 2
-5. [T][ ] 3230 w3 lecture
-6. [T][ ] 3230 w4 lecture
-7. [T][ ] 2106 w2 lecture
-8. [T][ ] 2106 w3 lecture
-9. [T][ ] 2106 w4 lecture
-10. [T][ ] 2106 w5 lecture
-11. [T][ ] 3230 w5 lecture
-12. [T][ ] 2108 w5 lecture1
-13. [D][ ] 2103 iP deliverables, due by: this friday 1600
-14. [D][ ] 2106 docs, due by: this sunday 2359
+5. [T][ ] 2106 w5 lecture
+6. [T][ ] 3230 w5 lecture
+7. [T][ ] 2108 w5 lecture1
+8. [D][ ] 2103 iP deliverables, due by: this friday 1600
+9. [D][ ] 2106 docs, due by: this sunday 2359
+10. [D][ ] 2108 hw2, due by: this friday 1800
+11. [D][ ] 2103 tP deliverables, due by: this sunday 2359
