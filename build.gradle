@@ -50,7 +50,7 @@ test {
 }
 
 application {
-    mainClass.set("edith.Launcher")
+    mainClass.set("edith.gui.Launcher")
 }
 
 shadowJar {
