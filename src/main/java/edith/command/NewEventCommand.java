@@ -12,6 +12,7 @@ import edith.util.EdithException;
  */
 public class NewEventCommand extends Command {
     private Event event;
+    private String dupCheck = "";
 
     /**
      * Constructor of NewEventCommand.
@@ -27,6 +28,7 @@ public class NewEventCommand extends Command {
 
     @Override
     public void run() {
+        this.dupCheck = tasks.searchTasks(this.event.getDescription());
         tasks.addTask(this.event);
         try {
             storage.saveToFile(tasks);
@@ -41,8 +43,7 @@ public class NewEventCommand extends Command {
                 + this.event.toString()
                 + "\nyou have " + tasks.getSize() + " tasks left";
 
-        String dupCheck = tasks.searchTasks(this.event.getDescription());
-        if (!dupCheck.isEmpty()) {
+        if (!this.dupCheck.isEmpty()) {
             int index = Integer.parseInt(dupCheck.split("\\.")[0]);
             out += "\nWarning! There is already a duplicate at index " + index;
         }

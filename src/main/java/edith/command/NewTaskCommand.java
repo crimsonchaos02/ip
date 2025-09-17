@@ -10,6 +10,7 @@ import edith.util.EdithException;
  */
 public class NewTaskCommand extends Command {
     private Task task;
+    private String dupCheck = "";
 
     /**
      * Constructor of NewTaskCommand.
@@ -25,6 +26,7 @@ public class NewTaskCommand extends Command {
 
     @Override
     public void run() {
+        this.dupCheck = tasks.searchTasks(this.task.getDescription());
         tasks.addTask(this.task);
         try {
             storage.saveToFile(tasks);
@@ -38,9 +40,7 @@ public class NewTaskCommand extends Command {
         String out = "added new task:\n"
                 + this.task.toString()
                 + "\nyou have " + tasks.getSize() + " tasks left";
-
-        String dupCheck = tasks.searchTasks(this.task.getDescription());
-        if (!dupCheck.isEmpty()) {
+        if (!this.dupCheck.isEmpty()) {
             int index = Integer.parseInt(dupCheck.split("\\.")[0]);
             out += "\nWarning! There is already a duplicate at index " + index;
         }

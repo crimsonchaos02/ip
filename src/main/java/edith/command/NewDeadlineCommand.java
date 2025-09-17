@@ -11,6 +11,7 @@ import edith.util.EdithException;
  */
 public class NewDeadlineCommand extends Command {
     private Deadline deadline;
+    private String dupCheck = "";
 
     /**
      * Constructor of NewDeadlineCommand.
@@ -26,6 +27,7 @@ public class NewDeadlineCommand extends Command {
 
     @Override
     public void run() {
+        this.dupCheck = tasks.searchTasks(this.deadline.getDescription());
         tasks.addTask(this.deadline);
         try {
             storage.saveToFile(tasks);
@@ -40,8 +42,7 @@ public class NewDeadlineCommand extends Command {
                 + this.deadline.toString()
                 + "\nyou have " + tasks.getSize() + " tasks left";
 
-        String dupCheck = tasks.searchTasks(this.deadline.getDescription());
-        if (!dupCheck.isEmpty()) {
+        if (!this.dupCheck.isEmpty()) {
             int index = Integer.parseInt(dupCheck.split("\\.")[0]);
             out += "\nWarning! There is already a duplicate at index " + index;
         }
