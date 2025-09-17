@@ -112,9 +112,12 @@ public class Parser {
         String[] strList = s.split(" ");
         String[] abbreviations = {"tomorrow", "tmr", "tmrw", "tomr", "tomrw"};
 
+        LocalTime time = LocalTime.of(12, 0);
         if (strList[0].equals("today") || Arrays.asList(abbreviations).contains(strList[0])) {
             try {
-                LocalTime time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
+                if (strList.length == 2) {
+                    time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
+                }
                 LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
                 return strList[0].equals("today")
                     ? LocalDateTime.now().with(time)
@@ -123,19 +126,18 @@ public class Parser {
                 throw new EdithException("boi please check your time format");
             }
         } else if (strList[0].equals("this") || strList[0].equals("next")) {
-            boolean isThis = strList[0].equals("this");
             DayOfWeek day = parseDay(strList[1]);
             if (day == null) {
                 throw new EdithException(ERROR_MESSAGE);
             }
-            LocalTime time = LocalTime.of(12, 0);
             if (strList.length == 3 && isValidTime(strList[2])) {
                 time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
             }
             LocalDateTime now = LocalDateTime.now();
-            return isThis
-                    ? now.with(TemporalAdjusters.nextOrSame(day)).with(time)
-                    : now.with(TemporalAdjusters.next(day)).with(time);
+            boolean isNext = strList[0].equals("next") && now.getDayOfWeek().getValue() < day.getValue();
+            return isNext
+                    ? now.with(TemporalAdjusters.next(day)).with(time).plusWeeks(1)
+                    : now.with(TemporalAdjusters.nextOrSame(day)).with(time);
         } else {
             throw new EdithException(ERROR_MESSAGE);
         }
@@ -175,15 +177,13 @@ public class Parser {
      */
 
     public static LocalDateTime parseDateTime(String s) throws EdithException {
-        String[] relative = s.split(" ");
-        String[] dateTime = s.split("[/T:]");
-        assert (relative.length > 1 || dateTime.length > 1) : "error in DateTime input!";
+        String[] checker = s.split("t");
 
         if (isValidDateTime(s)) {
             return LocalDateTime.parse(s, DateTimeFormatter.ofPattern("dd MMM yyyy HHmm"));
         }
         try {
-            if (relative.length > 1) {
+            if (checker.length > 1) {
                 return parseDateTimeRelative(s);
             } else {
                 return parseDateTimeFormatted(s);

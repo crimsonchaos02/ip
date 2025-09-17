@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -19,6 +20,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            Font.loadFont(getClass().getResourceAsStream("/fonts/Orbitron-VariableFont.ttf"), 14);
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
