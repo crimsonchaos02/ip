@@ -68,7 +68,37 @@ public class Parser {
     }
 
     /**
-     * Helper method for parseDateTime. Handles the "relative" date case.
+     * Helper function. Checks if an input string is of the form "HHmm"
+     * @param s String to be checked.
+     * @return true if matches the format, false if not.
+     */
+
+    public static boolean isValidTime(String s) throws DateTimeParseException {
+        try {
+            LocalTime.parse(s, DateTimeFormatter.ofPattern("HHmm"));
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Helper function. Checks if an input string is of the form "dd MMM yyyy HHmm"
+     * @param input String to be checked.
+     * @return true if matches the format, false if not.
+     */
+    public static boolean isValidDateTime(String input) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HHmm");
+        try {
+            LocalDateTime.parse(input, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Helper method for parseDateTime. Handles the "relative" date cases.
      * @param s input String.
      * @return Corresponding date time.
      * @throws EdithException if format is wrong.
@@ -76,49 +106,36 @@ public class Parser {
     public static LocalDateTime parseDateTimeRelative(String s) throws EdithException {
         //CHECKSTYLE.OFF: AbbreviationAsWordInName
         //CHECKSTYLE.OFF: LocalVariableName
-        String ERROR_MESSAGE = "syntax error. please use 'today/'this'/'next' followed by a day of the week, "
-                + "optionally with time (HHmm)."
+        String ERROR_MESSAGE = "syntax error. please use 'today/'this'/'next'/'tmr (variants accepted) "
+                + "followed by a day of the week, optionally with time (HHmm)."
                 + "\n If omitted, time will be set to a default of noon.";
         String[] strList = s.split(" ");
+        String[] abbreviations = {"tomorrow", "tmr", "tmrw", "tomr", "tomrw"};
 
-        if (strList[0].equals("today")) {
+        if (strList[0].equals("today") || Arrays.asList(abbreviations).contains(strList[0])) {
             try {
                 LocalTime time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
-                return LocalDateTime.now().with(time);
+                LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+                return strList[0].equals("today")
+                    ? LocalDateTime.now().with(time)
+                    : tomorrow.with(time);
             } catch (DateTimeParseException e) {
                 throw new EdithException("boi please check your time format");
             }
-        } else if (strList[0].equals("this")) {
+        } else if (strList[0].equals("this") || strList[0].equals("next")) {
+            boolean isThis = strList[0].equals("this");
             DayOfWeek day = parseDay(strList[1]);
             if (day == null) {
                 throw new EdithException(ERROR_MESSAGE);
             }
             LocalTime time = LocalTime.of(12, 0);
-            if (strList.length == 3) {
-                try {
-                    time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
-                } catch (DateTimeParseException e) {
-                    throw new EdithException("boi please check your date time format");
-                }
+            if (strList.length == 3 && isValidTime(strList[2])) {
+                time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
             }
             LocalDateTime now = LocalDateTime.now();
-            return now.with(TemporalAdjusters.nextOrSame(day)).with(time);
-
-        } else if (strList[0].equals("next")) {
-            DayOfWeek day = parseDay(strList[1]);
-            if (day == null) {
-                throw new EdithException(ERROR_MESSAGE);
-            }
-            LocalTime time = LocalTime.of(12, 0);
-            if (strList.length == 3) {
-                try {
-                    time = LocalTime.parse(strList[2], DateTimeFormatter.ofPattern("HHmm"));
-                } catch (DateTimeParseException e) {
-                    throw new EdithException("boi please check your date time format");
-                }
-            }
-            LocalDateTime now = LocalDateTime.now();
-            return now.with(TemporalAdjusters.next(day)).with(time);
+            return isThis
+                    ? now.with(TemporalAdjusters.nextOrSame(day)).with(time)
+                    : now.with(TemporalAdjusters.next(day)).with(time);
         } else {
             throw new EdithException(ERROR_MESSAGE);
         }
@@ -134,15 +151,10 @@ public class Parser {
         String[] dateTime = s.split("[/T:]");
         String ERROR_MESSAGE = "syntax error. please use 'dd/MM/yyyy/HHmm' with optional 24-hour time (HHmm). ";
 
-        if (dateTime.length == 3) {
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            try {
-                return LocalDateTime.parse(s, format);
-            } catch (DateTimeParseException e) {
-                throw new EdithException(ERROR_MESSAGE);
-            }
-        } else if (dateTime.length == 4) {
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy/HHmm");
+        if (dateTime.length == 3 || dateTime.length == 4) {
+            DateTimeFormatter format = dateTime.length == 3
+                    ? DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                    : DateTimeFormatter.ofPattern("dd/MM/yyyy/HHmm");
             try {
                 return LocalDateTime.parse(s, format);
             } catch (DateTimeParseException e) {
@@ -242,21 +254,6 @@ public class Parser {
         }
         String desc = s.split("\\] ")[1].substring(0, s.split("\\] ")[1].indexOf('(') - 1);
         return new Event(desc, from, to);
-    }
-
-    /**
-     * Helper function. Checks if an input string is of the form "dd MMM yyyy HHmm"
-     * @param input String to be checked.
-     * @return true if matches the format, false if not.
-     */
-    public static boolean isValidDateTime(String input) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HHmm");
-        try {
-            LocalDateTime.parse(input, formatter);
-            return true;
-        } catch (DateTimeParseException e) {
-            return false;
-        }
     }
 
     /**
@@ -365,6 +362,66 @@ public class Parser {
     }
 
     /**
+     * Helper method for parseInput. Handles cases where there is an integer argument
+     * (Mark, Unmark, Delete Commands).
+     * @param inp user input
+     * @param out current StringBuilder object to be converted and returned in parseInput.
+     * @throws EdithException if there is input format issue.
+     */
+    public static void parseInputWithInteger(StringBuilder out, String inp) throws EdithException {
+        String[] inps = inp.split(" ");
+        if (inps.length < 2) {
+            throw new EdithException("please enter a valid task index");
+        }
+        if (!inps[1].matches("-?\\d+")) {
+            throw new EdithException("please enter a valid integer task index");
+        }
+        out.append(inps[1]);
+    }
+
+    /**
+     * Helper function for parseTaskFromInput. Handles View commands.
+     * Directly alters StringBuilder out instance.
+     * @param inp user input.
+     * @throws EdithException if format is wrong.
+     */
+    public static void parseViewFromInput(StringBuilder out, String inp) throws EdithException {
+        String[] inps = inp.split(" ");
+        if (inps.length == 1) {
+            throw new EdithException("please enter search terms");
+        } else if (!inps[1].equals("for") && (!inps[1].equals("before"))) {
+            throw new EdithException("please choose between 'view for' or 'view before' a certain date");
+        } else if (inps.length == 2) {
+            throw new EdithException("please enter a date!");
+        }
+        out.append(inps[1]);
+        out.append("#@!");
+
+        try {
+            String dateStr = inp.split(" for | before ")[1];
+            out.append(parseDateTime(dateStr).toString());
+        } catch (EdithException e) {
+            throw new EdithException(e.getMessage());
+        }
+    }
+    /**
+     * Helper function for parseTaskFromInput. Handles View commands.
+     * Directly alters StringBuilder out instance.
+     * @param inp user input.
+     * @throws EdithException if format is wrong.
+     */
+    public static void parseFindFromInput(StringBuilder out, String inp) throws EdithException {
+        String[] inps = inp.split(" ");
+        if (inps.length == 1) {
+            throw new EdithException("please enter valid keywords to search");
+        }
+        for (int i = 1; i < inps.length; i++) {
+            out.append(inps[i]);
+            out.append(" ");
+        }
+    }
+
+    /**
      * Parses user input into a readable format for Logic class to handle.
      * @param inp user input
      * @return a String representation of user input such that it can be parsed into a new Command.
@@ -382,13 +439,7 @@ public class Parser {
         out.append("#@!");
 
         if (cmd == CommandType.MARK || cmd == CommandType.UNMARK || cmd == CommandType.DELETE) {
-            if (inps.length < 2) {
-                throw new EdithException("please enter a valid task index");
-            }
-            if (!inps[1].matches("-?\\d+")) {
-                throw new EdithException("please enter a valid integer task index");
-            }
-            out.append(inps[1]);
+            Parser.parseInputWithInteger(out, inp);
         } else if (cmd == CommandType.TODO) {
             out.append(parseTodoFromInput(inp));
         } else if (cmd == CommandType.DEADLINE) {
@@ -396,32 +447,10 @@ public class Parser {
         } else if (cmd == CommandType.EVENT) {
             out.append(parseEventFromInput(inp));
         } else if (cmd == CommandType.FIND) {
-            if (inps.length == 1) {
-                throw new EdithException("please enter valid keywords to search");
-            }
-            for (int i = 1; i < inps.length; i++) {
-                out.append(inps[i]);
-                out.append(" ");
-            }
+            Parser.parseFindFromInput(out, inp);
         } else if (cmd == CommandType.VIEW) {
-            if (inps.length == 1) {
-                throw new EdithException("please enter search terms");
-            } else if (!inps[1].equals("for") && (!inps[1].equals("before"))) {
-                throw new EdithException("please choose between 'view for' or 'view before' a certain date");
-            } else if (inps.length == 2) {
-                throw new EdithException("please enter a date!");
-            }
-            out.append(inps[1]);
-            out.append("#@!");
-
-            try {
-                String dateStr = inp.split(" for | before ")[1];
-                out.append(parseDateTime(dateStr).toString());
-            } catch (EdithException e) {
-                throw new EdithException(e.getMessage());
-            }
+            Parser.parseViewFromInput(out, inp);
         }
         return out.toString().trim();
     }
-
 }
