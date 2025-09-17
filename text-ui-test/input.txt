@@ -1,7 +1,7 @@
 todo plan trip
 event 2108 by tomorrow
-event lecture /from tomorrow 12 /to 4pm
-deadline 2108 lectures /by sunday
+event lecture /from this thursday /to 1600
+deadline 2108 lectures /by this sunday
 read article
 list
 mark 2
