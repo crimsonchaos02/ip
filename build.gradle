@@ -5,6 +5,12 @@ plugins {
 
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17) // ensure builds target Java 17
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -53,6 +59,6 @@ shadowJar {
     archiveFileName = 'edith.jar'
 }
 
-run{
+run {
     standardInput = System.in
 }
