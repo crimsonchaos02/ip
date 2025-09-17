@@ -1,3 +1,4 @@
+file not found. starting with empty task list.
 ==================================
 hello! this is edith :D
 what do we need today?
