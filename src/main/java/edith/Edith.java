@@ -63,7 +63,7 @@ public class Edith {
 
         while (true) {
             try {
-                String inp = ui.getInput();
+                String inp = ui.getInput().trim().replaceAll("\\s+", " ");
                 String out = logic.handleInput(inp);
                 ui.printMsg(out);
                 if (Parser.getCommandTypeFromString(inp.split(" ")[0]) == CommandType.BYE) {

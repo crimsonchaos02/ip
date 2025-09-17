@@ -252,6 +252,11 @@ public class Parser {
         } else {
             throw new EdithException("please fix your end time format");
         }
+
+        if (!to.isAfter(from)) {
+            throw new EdithException("event start cannot be before end!");
+        }
+
         String desc = s.split("\\] ")[1].substring(0, s.split("\\] ")[1].indexOf('(') - 1);
         return new Event(desc, from, to);
     }

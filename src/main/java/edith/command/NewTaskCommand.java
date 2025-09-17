@@ -35,8 +35,15 @@ public class NewTaskCommand extends Command {
 
     @Override
     public String getMessage() {
-        return "added new task:\n"
+        String out = "added new task:\n"
                 + this.task.toString()
                 + "\nyou have " + tasks.getSize() + " tasks left";
+
+        String dupCheck = tasks.searchTasks(this.task.getDescription());
+        if (!dupCheck.isEmpty()) {
+            int index = Integer.parseInt(dupCheck.split("\\.")[0]);
+            out += "\nWarning! There is already a duplicate at index " + index;
+        }
+        return out;
     }
 }
